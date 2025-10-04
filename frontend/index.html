@@ -1,13 +1,31 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Paisable</title>
+    <link rel="icon" id="favicon" type="image/svg+xml" href="/favicon-light.svg"/>
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"/>
+    <link rel="manifest" href="/site.webmanifest"/>
   </head>
   <body>
     <div id="root"></div>
+    <script>
+      // Set initial favicon based on saved theme or system preference
+      const savedTheme = localStorage.getItem('theme');
+      let initialTheme = 'light';
+      
+      if (savedTheme) {
+        initialTheme = savedTheme;
+      } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        initialTheme = 'dark';
+      }
+      
+      const favicon = document.getElementById('favicon');
+      if (favicon) {
+        favicon.href = initialTheme === 'dark' ? '/favicon-dark.svg' : '/favicon-light.svg';
+      }
+    </script>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>

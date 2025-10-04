@@ -22,6 +22,12 @@ export const ThemeProvider = ({ children }) => {
       root.classList.remove('dark');
     }
     localStorage.setItem('theme', theme);
+
+    // Update favicon based on theme
+    const favicon = document.getElementById('favicon');
+    if (favicon) {
+      favicon.href = theme === 'dark' ? '/favicon-dark.svg' : '/favicon-light.svg';
+    }
   }, [theme]);
 
   const toggleTheme = () => {
