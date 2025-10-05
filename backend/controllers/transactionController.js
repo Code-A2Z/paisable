@@ -28,10 +28,13 @@ const addTransaction = async (req, res) => {
 // @access  Private
 const getTransactions = async (req, res) => {
   try {
-    const { isIncome, category, startDate, endDate, page = 1, limit = 10 } = req.query;
+    const { search, isIncome, category, startDate, endDate, page = 1, limit = 10 } = req.query;
 
     const filter = { user: req.user.id, isDeleted: false };
-    
+
+    if (search) {
+      filter.name = { $regex: search, $options: 'i' };
+    }
     if (isIncome) filter.isIncome = isIncome;
     if (category) filter.category = category;
     if (startDate || endDate) {

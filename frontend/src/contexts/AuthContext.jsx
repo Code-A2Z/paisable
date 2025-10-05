@@ -44,7 +44,11 @@ export const AuthProvider = ({ children }) => {
       localStorage.setItem('token', newToken);
       api.defaults.headers.common['Authorization'] = `Bearer ${newToken}`;
       
-      navigate('/dashboard');
+      if (!userData.isSetupComplete) {
+        navigate('/setup');
+      } else {
+        navigate('/dashboard');
+      }
     } catch (error) {
       console.error('Login failed', error.response?.data);
     }
@@ -60,7 +64,7 @@ export const AuthProvider = ({ children }) => {
       localStorage.setItem('token', newToken);
       api.defaults.headers.common['Authorization'] = `Bearer ${newToken}`;
       
-      navigate('/dashboard');
+      navigate('/setup');
     } catch (error) {
       console.error('Signup failed', error.response?.data);
       throw new Error(error.response?.data?.message || 'Signup failed. Please try again.');
@@ -74,9 +78,22 @@ export const AuthProvider = ({ children }) => {
     delete api.defaults.headers.common['Authorization'];
     navigate('/login');
   };
+
+  const setup = async (defaultCurrency) => {
+    try {
+      const response = await api.put('/auth/setup', { defaultCurrency });
+      
+      setUser(response.data);
+      
+      navigate('/dashboard');
+    } catch (error) {
+      console.error('Setup failed', error);
+      throw new Error(error.response?.data?.message || 'Setup failed. Please try again.');
+    }
+  };
   
   return (
-    <AuthContext.Provider value={{ user, token, loading, login, signup, logout }}>
+    <AuthContext.Provider value={{ user, token, loading, login, signup, logout, setup }}>
       {children}
     </AuthContext.Provider>
   );

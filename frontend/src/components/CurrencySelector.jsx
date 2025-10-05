@@ -1,9 +1,18 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import useCurrency from '../hooks/useCurrency';
+import useAuth from '../hooks/useAuth';
 
 const CurrencySelector = () => {
   const { currency, changeCurrency, supportedCurrencies } = useCurrency();
+  const { user } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
+
+  useEffect(() => {
+    if (user?.defaultCurrency) {
+      const userCurrency = supportedCurrencies.find(c => c.code === user.defaultCurrency);
+      changeCurrency(userCurrency);
+    }
+  }, [user]);
 
   const handleSelect = (code) => {
     changeCurrency(code);
