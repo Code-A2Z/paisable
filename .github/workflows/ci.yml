@@ -16,8 +16,8 @@ jobs:
     env: 
       PORT: 5000
       MONGO_URI: mongodb://mongo:27017/testdb
-      JWT_SECRET: your-secret-key
-      GEMINI_API_KEY: your-gemini-api-key
+      JWT_SECRET: ${{ secrets.JWT_SECRET }}
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
       VITE_API_URL: http://localhost:5000/api
     steps:
       - name: Checkout
@@ -49,6 +49,7 @@ jobs:
           echo "Server failed to start. Printing logs:"
           cat server.log
           kill $server_pid
+          exit 1
       - name: Install Frontend & Run
         run: |
           cd frontend
