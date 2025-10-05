@@ -1,26 +1,24 @@
 import React, { createContext, useState, useEffect } from 'react';
 import { supportedCurrencies } from '../config/currencies';
+import useAuth from '../hooks/useAuth';
 
 const CurrencyContext = createContext();
 
 export const CurrencyProvider = ({ children }) => {
   const [currency, setCurrency] = useState(supportedCurrencies[0]);
+  const { user } = useAuth();
 
   useEffect(() => {
-    const savedCurrencyCode = localStorage.getItem('currencyCode');
-    if (savedCurrencyCode) {
-      const savedCurrency = supportedCurrencies.find(c => c.code === savedCurrencyCode);
-      if (savedCurrency) {
-        setCurrency(savedCurrency);
-      }
+    if (user?.defaultCurrency) {
+      const userCurrency = supportedCurrencies.find(c => c.code === user.defaultCurrency);
+      setCurrency(userCurrency);
     }
-  }, []);
+  }, [user]);
 
   const changeCurrency = (currencyCode) => {
     const newCurrency = supportedCurrencies.find(c => c.code === currencyCode);
     if (newCurrency) {
       setCurrency(newCurrency);
-      localStorage.setItem('currencyCode', newCurrency.code);
     }
   };
 

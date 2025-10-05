@@ -59,6 +59,8 @@ const login = async (req, res) => {
         _id: user._id,
         email: user.email,
         token: generateToken(user._id),
+        isSetupComplete: user.isSetupComplete,
+        defaultCurrency: user.defaultCurrency,
       });
     } else {
       res.status(401).json({ message: 'Invalid email or password' });
@@ -76,9 +78,44 @@ const getMe = async (req, res) => {
   res.status(200).json(req.user);
 };
 
+// @desc    Complete user setup
+// @route   PUT /api/auth/setup
+// @access  Private
+const completeSetup = async (req, res) => {
+  const { defaultCurrency } = req.body;
+
+  if (!defaultCurrency) {
+    return res.status(400).json({ message: 'Default currency is required' });
+  }
+
+  try {
+    const user = await User.findByIdAndUpdate(
+      req.user._id,
+      { 
+        defaultCurrency,
+        isSetupComplete: true 
+      },
+      { new: true }
+    );
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    res.status(200).json({
+      _id: user._id,
+      email: user.email,
+      defaultCurrency: user.defaultCurrency,
+      isSetupComplete: user.isSetupComplete,
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Server Error', error: error.message });
+  }
+};
 
 module.exports = {
   signup,
   login,
   getMe,
+  completeSetup,
 };

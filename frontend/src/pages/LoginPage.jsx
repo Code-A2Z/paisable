@@ -10,11 +10,17 @@ const DEMO_PASSWORD = 'password123'; */
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [serverError, setServerError] = useState('');
   const { login } = useAuth();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    login(email, password);
+    setServerError(''); // Clear previous server errors
+    try {
+      await login(email, password);
+    } catch (error) {
+      setServerError(error.message);
+    }
   };
 
   /* const handleFillDemoCredentials = () => {
@@ -30,6 +36,7 @@ export default function LoginPage() {
 
       <div className="px-8 py-6 text-left bg-white dark:bg-gray-800 shadow-lg rounded-lg w-full max-w-md">
         <h3 className="text-2xl font-bold text-center text-gray-800 dark:text-gray-200">Login to your account</h3>
+        {serverError && <p className="text-center text-red-500 bg-red-100 dark:bg-red-900/50 p-2 rounded-md my-4">{serverError}</p>}
         <form onSubmit={handleSubmit}>
           <div className="mt-4">
             <div>

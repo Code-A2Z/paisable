@@ -7,7 +7,6 @@ describe("handleExportCSV", () => {
   let mockGet;
   let mockCreateObjectURL;
   let mockRevokeObjectURL;
-  let mockCreateElement;
   let mockAppendChild;
   let mockClick;
   let mockRemove;
@@ -32,7 +31,7 @@ describe("handleExportCSV", () => {
     mockRemove = vi.fn();
     mockAppendChild = vi.spyOn(document.body, "appendChild").mockImplementation(() => {});
 
-    mockCreateElement = vi.spyOn(document, "createElement").mockImplementation(() => ({
+    vi.spyOn(document, "createElement").mockImplementation(() => ({
       href: "",
       download: "",
       click: mockClick,
