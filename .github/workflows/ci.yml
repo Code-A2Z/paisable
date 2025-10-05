@@ -30,7 +30,7 @@ jobs:
         run: |
           cd backend
           npm install 
-          # npm run test
+          npm run test
           npm run dev > server.log 2>&1 &
           server_pid=$!
           echo "Server started with PID: $server_pid"
