@@ -6,6 +6,7 @@ import TransactionModal from '../components/TransactionModal';
 import useCurrency from '../hooks/useCurrency';
 import useTheme from '../hooks/useTheme';
 import Spinner from '../components/Spinner';
+import toast from 'react-hot-toast';
 import EmptyState from '../components/EmptyState';
 import { IoWarning } from "react-icons/io5";
 
@@ -62,7 +63,7 @@ const DashboardPage = () => {
       setIncomeCategories(incomeCategoriesRes.data);
       setRecentTransactions(summaryRes.data.recentTransactions || []);
     } catch (error) {
-      console.error("Failed to fetch dashboard data", error);
+      toast.error("Failed to fetch dashboard data");
     } finally {
       setLoading(false);
     }
@@ -94,7 +95,7 @@ const DashboardPage = () => {
       fetchData();
       handleCloseModal();
     } catch (error) {
-      console.error("Failed to save transaction", error);
+      toast.error("Failed to save transaction");
     }
   };
 

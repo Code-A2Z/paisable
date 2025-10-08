@@ -11,6 +11,7 @@ import WelcomePage from './pages/WelcomePage';
 import ProtectedRoute from './components/ProtectedRoute';
 import SetupProtectedRoute from './components/SetupProtectedRoute';
 import Layout from './components/Layout';
+import { Toaster } from 'react-hot-toast'
 import SettingsPage from './pages/SettingsPage';
 import RecurringTransactions from './pages/RecurringTransactions';
 import ContactUs from './pages/ContactUs';
@@ -23,6 +24,13 @@ function App() {
         <Route path="/" element={<WelcomePage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
+
+        {/* Protected Routes Wrapper */}
+        <Route 
+          element={
+            <ProtectedRoute>
+              <Layout />
+            </ProtectedRoute>
         <Route path="/contact" element={<ContactUs />} />
         {/* Protected Routes */}
         <Route
@@ -52,6 +60,7 @@ function App() {
         </Route>
       </Routes>
       <ToastContainer />
+      <Toaster position="top-right" reverseOrder={false}/>
     </>
   );
 }

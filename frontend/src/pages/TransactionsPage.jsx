@@ -6,6 +6,7 @@ import TransactionDetailModal from '../components/TransactionDetailModal'
 import ManageCategoriesModal from '../components/ManageCategoriesModal';
 import Spinner from '../components/Spinner';
 import useCurrency from '../hooks/useCurrency';
+import toast from 'react-hot-toast';
 import EmptyState from '../components/EmptyState';
 
 const handleExportCSV = async () => {
@@ -23,7 +24,7 @@ const handleExportCSV = async () => {
     a.remove();
     window.URL.revokeObjectURL(url);
   } catch (error) {
-    console.error("Failed to export CSV", error);
+    toast.error("Failed to export CSV");
     alert("Failed to export CSV. Please try again.");
   }
 };
@@ -106,7 +107,7 @@ const TransactionsPage = () => {
       setSelectedTransactionIds([]); // Clear selection on data change
 
     } catch (error) {
-      console.error("Failed to fetch transactions data", error);
+      toast.error("Failed to fetch transactions data");
     } finally {
       setLoading(false);
       setIsFiltering(false);
@@ -187,7 +188,7 @@ const TransactionsPage = () => {
       fetchData();
       handleCloseTransactionModal();
     } catch (error) {
-      console.error("Failed to save transaction", error);
+      toast.error("Failed to save transaction");
     }
   };
 
@@ -206,7 +207,7 @@ const TransactionsPage = () => {
           return updatedTransactions;
         });
       } catch (error) {
-        console.error("Failed to delete transaction", error);
+        toast.error("Failed to delete transaction");
       }
     }
   };
@@ -249,7 +250,7 @@ const TransactionsPage = () => {
         await api.delete('/transactions/category', { data: { categoryToDelete } });
         fetchData();
       } catch (error) {
-        console.error("Failed to delete category", error);
+        toast.error("Failed to delete category");
       }
     }
   };

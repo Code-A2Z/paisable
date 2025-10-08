@@ -2,6 +2,7 @@ import React, { createContext, useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import api from '../api/axios';
+import toast from 'react-hot-toast';
 
 const AuthContext = createContext();
 
@@ -24,7 +25,7 @@ export const AuthProvider = ({ children }) => {
           setUser(response.data);
         } catch (error) {
           // Clear invalid token
-          console.error("Token verification failed", error);
+          toast.error("Token verification failed");
           localStorage.removeItem('token');
           setUser(null);
           setToken(null);
@@ -60,6 +61,7 @@ export const AuthProvider = ({ children }) => {
         navigate('/dashboard');
       }
     } catch (error) {
+      toast.error('Login failed');
       console.error('Login failed', error.response?.data);
       setPendingToast({ type: 'error', message: error.response?.data?.message || 'Login failed. Please try again.' });
       throw new Error(error.response?.data?.message || 'Login failed. Please try again.');
@@ -79,6 +81,7 @@ export const AuthProvider = ({ children }) => {
       setPendingToast({ type: 'success', message: 'Signup successful!' });
       navigate('/setup');
     } catch (error) {
+      toast.error('Signup failed');
       console.error('Signup failed', error.response?.data);
       setPendingToast({ type: 'error', message: error.response?.data?.message || 'Signup failed. Please try again.' });
       throw new Error(error.response?.data?.message || 'Signup failed. Please try again.');
