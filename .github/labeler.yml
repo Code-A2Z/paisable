@@ -1,9 +1,12 @@
-# .github/labeler.yml
 frontend:
-  - "client/**/*"
+  - "frontend/**/*"
+
 backend:
-  - "server/**/*"
+  - "backend/**/*"
+
 docs:
+  - "docs/**/*"
   - "**/*.md"
+
 tests:
   - "**/__tests__/**/*"

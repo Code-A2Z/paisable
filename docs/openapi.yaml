@@ -188,15 +188,25 @@ paths:
         "200":
           description: Returns data structured for category and activity charts
 
-  /transactions/categories:
+  /transactions/categories/expense:
     get:
-      summary: Get all unique categories
+      summary: Get all unique expense categories
       tags: [Transactions]
       security:
         - bearerAuth: []
       responses:
         "200":
-          description: Returns a list of all default and user-defined categories
+          description: Returns a list of all default and user-defined expense categories
+
+  /transactions/categories/income:
+    get:
+      summary: Get all unique income categories
+      tags: [Transactions]
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Returns a list of all default and user-defined income categories
 
   /transactions/category:
     delete:

@@ -1,6 +1,6 @@
 import { describe, it, vi, expect, beforeEach, afterEach } from "vitest";
 import api from "../api/axios";
-import {handleExportCSV} from "./TransactionsPage";
+import { handleExportCSV } from "../utils/transactions";
 
 
 describe("handleExportCSV", () => {

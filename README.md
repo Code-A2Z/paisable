@@ -111,6 +111,7 @@ PORT=5000
 MONGO_URI=your-mongodb-atlas-uri
 JWT_SECRET=your-secret-key
 GEMINI_API_KEY=your-gemini-api-key
+KEEP_ALIVE_URL=http://localhost:5000 
 ```
 
 Start the backend:
@@ -167,7 +168,8 @@ You can:
 * `POST /api/transactions` → Create a new transaction
 * `GET /api/transactions/summary` → Get income, expense, balance, and recent transactions
 * `GET /api/transactions/charts` → Get data for dashboard charts
-* `GET /api/transactions/categories` → Get unique transaction categories
+* `GET /api/transactions/categories/expense` → Get unique expense transaction categories
+* `GET /api/transactions/categories/income` → Get unique income transaction categories
 * `DELETE /api/transactions/category` → Delete a custom category
 
 ### Analytics

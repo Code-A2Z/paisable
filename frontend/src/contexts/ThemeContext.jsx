@@ -1,4 +1,5 @@
 import React, { createContext, useState, useEffect } from 'react';
+import { updateFavicon } from '../utils/favicon';
 
 const ThemeContext = createContext();
 
@@ -22,6 +23,7 @@ export const ThemeProvider = ({ children }) => {
       root.classList.remove('dark');
     }
     localStorage.setItem('theme', theme);
+    updateFavicon(theme);
   }, [theme]);
 
   const toggleTheme = () => {
