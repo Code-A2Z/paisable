@@ -7,26 +7,7 @@ import ManageCategoriesModal from '../components/ManageCategoriesModal';
 import Spinner from '../components/Spinner';
 import useCurrency from '../hooks/useCurrency';
 import EmptyState from '../components/EmptyState';
-
-const handleExportCSV = async () => {
-  try {
-    const res = await api.get('/transactions/export', {
-      responseType: 'blob',
-    });
-    const blob = new Blob([res.data], { type: 'text/csv' });
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'paisable_transactions.csv';
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    window.URL.revokeObjectURL(url);
-  } catch (error) {
-    console.error("Failed to export CSV", error);
-    alert("Failed to export CSV. Please try again.");
-  }
-};
+import { handleExportCSV } from '../utils/transactions';
 
 const TransactionsPage = () => {
   const [transactions, setTransactions] = useState([]);
@@ -490,5 +471,4 @@ const TransactionsPage = () => {
   );
 };
 
-// eslint-disable-next-line react-refresh/only-export-components
-export { TransactionsPage, handleExportCSV };
+export default TransactionsPage;

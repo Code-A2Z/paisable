@@ -5,7 +5,7 @@ import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import SetupPage from './pages/SetupPage';
 import DashboardPage from './pages/DashboardPage';
-import { TransactionsPage } from './pages/TransactionsPage';
+import TransactionsPage from './pages/TransactionsPage';
 import ReceiptsPage from './pages/ReceiptsPage';
 import WelcomePage from './pages/WelcomePage';
 import SettingsPage from './pages/SettingsPage';
