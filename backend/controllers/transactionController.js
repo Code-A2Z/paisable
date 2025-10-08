@@ -4,7 +4,7 @@ const Papa = require('papaparse');
 // @route   POST /api/transactions
 // @access  Private
 const addTransaction = async (req, res) => {
-  const { name, category, cost, addedOn, isIncome } = req.body;
+  const { name, category, cost, addedOn, isIncome, note } = req.body;
 
   try {
     const transaction = new IncomeExpense({
@@ -14,6 +14,7 @@ const addTransaction = async (req, res) => {
       cost,
       addedOn,
       isIncome,
+      note
     });
 
     const createdTransaction = await transaction.save();
@@ -28,10 +29,13 @@ const addTransaction = async (req, res) => {
 // @access  Private
 const getTransactions = async (req, res) => {
   try {
-    const { isIncome, category, startDate, endDate, page = 1, limit = 10 } = req.query;
+    const { search, isIncome, category, startDate, endDate, page = 1, limit = 10 } = req.query;
 
     const filter = { user: req.user.id, isDeleted: false };
-    
+
+    if (search) {
+      filter.name = { $regex: search, $options: 'i' };
+    }
     if (isIncome) filter.isIncome = isIncome;
     if (category) filter.category = category;
     if (startDate || endDate) {
@@ -39,12 +43,12 @@ const getTransactions = async (req, res) => {
       if (startDate) filter.addedOn.$gte = new Date(startDate);
       if (endDate) filter.addedOn.$lte = new Date(endDate);
     }
-    
+
     const transactions = await IncomeExpense.find(filter)
       .limit(limit * 1)
       .skip((page - 1) * limit)
       .sort({ addedOn: -1 });
-      
+
     const count = await IncomeExpense.countDocuments(filter);
 
     res.json({
@@ -73,12 +77,13 @@ const updateTransaction = async (req, res) => {
       return res.status(401).json({ message: 'User not authorized' });
     }
 
-    const { name, category, cost, addedOn, isIncome } = req.body;
+    const { name, category, cost, addedOn, isIncome, note } = req.body;
     transaction.name = name || transaction.name;
     transaction.category = category || transaction.category;
     transaction.cost = cost || transaction.cost;
     transaction.addedOn = addedOn || transaction.addedOn;
     transaction.isIncome = (isIncome !== undefined) ? isIncome : transaction.isIncome;
+    transaction.note = note || transaction.note;
 
     const updatedTransaction = await transaction.save();
     res.json(updatedTransaction);
@@ -93,7 +98,7 @@ const updateTransaction = async (req, res) => {
 const deleteTransaction = async (req, res) => {
   try {
     const transaction = await IncomeExpense.findById(req.params.id);
-    
+
     if (!transaction) {
       return res.status(404).json({ message: 'Transaction not found' });
     }
@@ -104,8 +109,50 @@ const deleteTransaction = async (req, res) => {
 
     transaction.isDeleted = true;
     await transaction.save();
-    
+
     res.json({ message: 'Transaction removed successfully' });
+  } catch (error) {
+    res.status(500).json({ message: 'Server Error', error: error.message });
+  }
+};
+
+// @desc    Bulk delete transactions
+// @route   DELETE /api/transactions/bulk
+// @access  Private
+const bulkDeleteTransactions = async (req, res) => {
+  try {
+    const { transactionIds } = req.body;
+
+    if (!transactionIds || !Array.isArray(transactionIds) || transactionIds.length === 0) {
+      return res.status(400).json({ message: 'Transaction IDs array is required' });
+    }
+
+    // Verify all transactions belong to the user and exist
+    const transactions = await IncomeExpense.find({
+      _id: { $in: transactionIds },
+      user: req.user.id,
+      isDeleted: false
+    });
+
+    if (transactions.length !== transactionIds.length) {
+      return res.status(404).json({ 
+        message: 'Some transactions not found or not authorized' 
+      });
+    }
+
+    // Mark all transactions as deleted
+    const result = await IncomeExpense.updateMany(
+      {
+        _id: { $in: transactionIds },
+        user: req.user.id
+      },
+      { isDeleted: true }
+    );
+
+    res.json({ 
+      message: `${result.modifiedCount} transactions deleted successfully`,
+      deletedCount: result.modifiedCount
+    });
   } catch (error) {
     res.status(500).json({ message: 'Server Error', error: error.message });
   }
@@ -131,7 +178,7 @@ const getTransactionSummary = async (req, res) => {
         totalExpenses = group.total;
       }
     });
-    
+
     const balance = totalIncome - totalExpenses;
     // 5 most recent transactions
     const recentTransactions = await IncomeExpense.find({ user: req.user._id, isDeleted: false })
@@ -164,29 +211,29 @@ const getChartData = async (req, res) => {
     // Data for Expenses Over Time (Bar Chart)
     const expensesOverTime = await IncomeExpense.aggregate([
       { $match: { user: userId, isIncome: false, isDeleted: false, addedOn: { $gte: thirtyDaysAgo } } },
-      { 
-        $group: { 
-          _id: { $dateToString: { format: "%Y-%m-%d", date: "$addedOn" } }, 
-          total: { $sum: '$cost' } 
-        } 
+      {
+        $group: {
+          _id: { $dateToString: { format: "%Y-%m-%d", date: "$addedOn" } },
+          total: { $sum: '$cost' }
+        }
       },
       { $sort: { _id: 1 } },
       { $project: { date: '$_id', total: 1, _id: 0 } }
     ]);
-    
+
     // Data for Income Over Time (Bar Chart)
     const incomeOverTime = await IncomeExpense.aggregate([
       { $match: { user: userId, isIncome: true, isDeleted: false, addedOn: { $gte: thirtyDaysAgo } } },
-      { 
-        $group: { 
-          _id: { $dateToString: { format: "%Y-%m-%d", date: "$addedOn" } }, 
-          total: { $sum: '$cost' } 
-        } 
+      {
+        $group: {
+          _id: { $dateToString: { format: "%Y-%m-%d", date: "$addedOn" } },
+          total: { $sum: '$cost' }
+        }
       },
       { $sort: { _id: 1 } },
       { $project: { date: '$_id', total: 1, _id: 0 } }
     ]);
-    
+
     res.json({ expensesByCategory, expensesOverTime, incomeOverTime });
   } catch (error) {
     // Also log the error to the backend console for easier debugging
@@ -198,28 +245,56 @@ const getChartData = async (req, res) => {
 // @desc    Get all unique categories for a user
 // @route   GET /api/transactions/categories
 // @access  Private
-const getCategories = async (req, res) => {
+const getExpenseCategories = async (req, res) => {
   try {
     // 1. Define a list of default categories
-    const defaultCategories = [
+    const defaultExpenseCategories = [
       'Food',
       'Shopping',
       'Bills',
       'Subscriptions',
       'Transportation',
-      'Salary',
       'Entertainment',
       'Groceries',
       'Miscellaneous'
     ];
-    
+
     // 2. Get the user's custom categories from the database
-    const userCategories = await IncomeExpense.distinct('category', { user: req.user._id });
-    
+    const userExpenseCategories = await IncomeExpense.distinct('category', { user: req.user._id, isIncome: false });
+
     // 3. Combine, de-duplicate, and sort the lists
-    const combinedCategories = [...new Set([...defaultCategories, ...userCategories])];
+    const combinedCategories = [...new Set([...defaultExpenseCategories, ...userExpenseCategories])];
     combinedCategories.sort();
-    
+
+    res.json(combinedCategories);
+  } catch (error) {
+    res.status(500).json({ message: 'Server Error', error: error.message });
+  }
+};
+
+// @desc    Get all unique categories for user income
+// @route   GET /api/transactions/categories/income
+// @access  Private
+const getIncomeCategories = async (req, res) => {
+  try {
+    const defaultIncomeCategories = [
+      'Salary',
+      'Freelance / Side Gig',
+      'Investment Returns',
+      'Gifts',
+      'Refunds'
+    ];
+
+    // 2. Get the user's custom income categories from the database
+    const userIncomeCategories = await IncomeExpense.distinct('category', {
+      user: req.user._id,
+      isIncome: true
+    });
+
+    // 3. Combine, de-duplicate, and sort
+    const combinedCategories = [...new Set([...defaultIncomeCategories, ...userIncomeCategories])];
+    combinedCategories.sort();
+
     res.json(combinedCategories);
   } catch (error) {
     res.status(500).json({ message: 'Server Error', error: error.message });
@@ -280,9 +355,11 @@ module.exports = {
   getTransactions,
   updateTransaction,
   deleteTransaction,
+  bulkDeleteTransactions,
   getTransactionSummary,
   getChartData,
-  getCategories,
+  getExpenseCategories,
+  getIncomeCategories,
   deleteCategory,
   exportTransactions,
 };

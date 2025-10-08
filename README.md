@@ -9,6 +9,7 @@ Paisable is a **full-stack personal finance management app** built with **React 
 * **Analytics & Charts** – Visual breakdown by category, income/expense trends
 * **Receipt Management** – Upload receipts and automatically extract expense details using **Google Gemini OCR**
 * **Full-Stack Deployment Ready** – Backend on **Render**, frontend on **Netlify**
+* **Account Settings** – View your profile and delete your account permanently from the app.
 
 ## Deployment Links
 
@@ -55,7 +56,8 @@ Paisable is a **full-stack personal finance management app** built with **React 
 │ ├── routes/
 │ │ ├── authRoutes.js
 │ │ ├── transactionRoutes.js
-│ │ └── receiptRoutes.js
+│ │ ├── receiptRoutes.js
+| | └── userRoutes.js
 │ ├── middleware/
 │ ├── controllers/
 │ ├── models/
@@ -109,6 +111,7 @@ PORT=5000
 MONGO_URI=your-mongodb-atlas-uri
 JWT_SECRET=your-secret-key
 GEMINI_API_KEY=your-gemini-api-key
+KEEP_ALIVE_URL=http://localhost:5000 
 ```
 
 Start the backend:
@@ -129,7 +132,7 @@ npm install
 Create a **`.env`** file in the `frontend/` folder:
 
 ```env
-VITE_API_URL=http://localhost:5000/api
+VITE_API_URL=http://localhost:5000
 ```
 
 Start the frontend:
@@ -165,7 +168,8 @@ You can:
 * `POST /api/transactions` → Create a new transaction
 * `GET /api/transactions/summary` → Get income, expense, balance, and recent transactions
 * `GET /api/transactions/charts` → Get data for dashboard charts
-* `GET /api/transactions/categories` → Get unique transaction categories
+* `GET /api/transactions/categories/expense` → Get unique expense transaction categories
+* `GET /api/transactions/categories/income` → Get unique income transaction categories
 * `DELETE /api/transactions/category` → Delete a custom category
 
 ### Analytics
@@ -176,6 +180,9 @@ You can:
 ### Receipts
 
 * `POST /api/receipts/upload` → Upload receipt, trigger Gemini OCR, and create a transaction in one step
+
+### Users
+* `DELETE /api/users/account` → Delete the authenticated user account permanently
 
 ## Deployment
 

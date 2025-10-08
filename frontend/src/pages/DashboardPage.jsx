@@ -7,6 +7,10 @@ import useCurrency from '../hooks/useCurrency';
 import useTheme from '../hooks/useTheme';
 import Spinner from '../components/Spinner';
 import toast from 'react-hot-toast';
+import EmptyState from '../components/EmptyState';
+import { IoWarning } from "react-icons/io5";
+
+
 
 // A reusable card component for the dashboard summary
 const SummaryCard = ({ title, value, bgColor, loading }) => {
@@ -38,21 +42,25 @@ const DashboardPage = () => {
   const [recentTransactions, setRecentTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [categories, setCategories] = useState([]);
+  const [expenseCategories, setExpenseCategories] = useState([]);
+  const [incomeCategories, setIncomeCategories] = useState([]);
   const { currency } = useCurrency();
   const { theme } = useTheme();
 
   const fetchData = useCallback(async () => {
     try {
       setLoading(true);
-      const [summaryRes, chartRes, categoriesRes] = await Promise.all([
-        api.get('/transactions/summary'),
-        api.get('/transactions/charts'),
-        api.get('/transactions/categories')
-      ]);
+      const [summaryRes, chartRes, expenseCategoriesRes, // New API call
+        incomeCategoriesRes] = await Promise.all([
+          api.get('/transactions/summary'),
+          api.get('/transactions/charts'),
+          api.get('/transactions/categories/expense'),
+          api.get('/transactions/categories/income')
+        ]);
       setSummaryData(summaryRes.data);
       setChartData(chartRes.data);
-      setCategories(categoriesRes.data);
+      setExpenseCategories(expenseCategoriesRes.data);
+      setIncomeCategories(incomeCategoriesRes.data);
       setRecentTransactions(summaryRes.data.recentTransactions || []);
     } catch (error) {
       toast.error("Failed to fetch dashboard data");
@@ -69,8 +77,21 @@ const DashboardPage = () => {
   const handleCloseModal = () => setIsModalOpen(false);
 
   const handleFormSubmit = async (formData) => {
+    if (!formData.name || formData.name.trim() === "") {
+      alert("Please enter a name for the transaction");
+      return;
+    }
+    if (!formData.cost || isNaN(formData.cost) || Number(formData.cost) <= 0) {
+      alert("Please enter a valid cost greater than 0");
+      return;
+    }
+    if (!formData.category || formData.category.trim() === "") {
+      alert("Please select a category");
+      return;
+    }
+
     try {
-      await api.post('/transactions', formData);
+      await api.post("/transactions", formData);
       fetchData();
       handleCloseModal();
     } catch (error) {
@@ -78,22 +99,26 @@ const DashboardPage = () => {
     }
   };
 
-  const handleNewCategory = (newCategory) => {
-    setCategories(prev => [...prev, newCategory].sort());
+  const handleNewCategory = (newCategory, isIncome) => {
+    if (isIncome) {
+      setIncomeCategories(prev => [...prev, newCategory].sort());
+    } else {
+      setExpenseCategories(prev => [...prev, newCategory].sort());
+    }
   };
 
   return (
     <>
       <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
         <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Dashboard Overview</h1>
-        <button 
-          onClick={handleOpenModal} 
+        <button
+          onClick={handleOpenModal}
           className="px-4 py-2 font-semibold bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75"
         >
           + Add Transaction
         </button>
       </div>
-      
+
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <SummaryCard title="Total Income" value={summaryData.totalIncome} bgColor="bg-green-200" loading={loading} />
         <SummaryCard title="Total Expense" value={summaryData.totalExpenses} bgColor="bg-red-200" loading={loading} />
@@ -106,23 +131,23 @@ const DashboardPage = () => {
           {loading ? <Spinner /> : chartData?.expensesByCategory.length > 0 ? (
     <CategoryPieChart data={chartData.expensesByCategory} theme={theme} />
   ) : (
-    <div className="h-full flex items-center justify-center bg-gray-100 dark:bg-gray-700 rounded"><p className="text-gray-500 dark:text-gray-400">No expense data to display.</p></div>
+       <EmptyState message="No expense data to display." icon={<IoWarning className="w-6 h-6 text-yellow-500" />}/>
   )}
         </div>
         <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
           <h2 className="text-xl font-bold text-gray-800 dark:text-gray-200 mb-4">Recent Activity</h2>
           <div className="relative h-80">
             {loading ? <Spinner /> : (chartData?.expensesOverTime.length > 0 || chartData?.incomeOverTime.length > 0) ? (
-              <ActivityBarChart 
+              <ActivityBarChart
                 expensesData={chartData.expensesOverTime}
                 incomeData={chartData.incomeOverTime}
-                theme={theme} 
+                theme={theme}
               />
             ) : (
-              <div className="h-full flex items-center justify-center bg-gray-100 dark:bg-gray-700 rounded"><p className="text-gray-500 dark:text-gray-400">No recent activity to display.</p></div>
+              <EmptyState message="No recent activity to display."/>
             )}
           </div>
-          
+
           <div className="mt-6">
             <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-300 border-t border-gray-200 dark:border-gray-700 pt-4 mt-4">Recent Transactions</h3>
             {loading ? <p className="text-gray-500 dark:text-gray-400 mt-2">Loading transactions...</p> : recentTransactions.length > 0 ? (
@@ -143,8 +168,9 @@ const DashboardPage = () => {
           </div>
         </div>
       </div>
-      
-      <TransactionModal isOpen={isModalOpen} onClose={handleCloseModal} onSubmit={handleFormSubmit} categories={categories} onNewCategory={handleNewCategory} />
+
+      <TransactionModal isOpen={isModalOpen} onClose={handleCloseModal} onSubmit={handleFormSubmit} expenseCategories={expenseCategories}
+        incomeCategories={incomeCategories} onNewCategory={handleNewCategory} currentBalance={summaryData.balance} />
     </>
   );
 };

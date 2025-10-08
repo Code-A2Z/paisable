@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
+    "axios": "^1.12.2",
     "bcryptjs": "^3.0.2",
     "cors": "^2.8.5",
     "dotenv": "^17.2.2",
@@ -24,12 +25,13 @@
     "mongodb": "^6.19.0",
     "mongoose": "^8.18.1",
     "multer": "^2.0.2",
+    "node-cron": "^4.2.1",
     "papaparse": "^5.5.3"
   },
   "devDependencies": {
     "jest": "^29.7.0",
     "mongodb-memory-server": "^10.2.1",
-    "nodemon": "^3.0.1",
+    "nodemon": "^3.1.10",
     "supertest": "^7.1.4"
   }
 }

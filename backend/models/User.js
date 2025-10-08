@@ -12,6 +12,14 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  defaultCurrency: {
+    type: String,
+    default: 'USD',
+  },
+  isSetupComplete: {
+    type: Boolean,
+    default: false,
+  },
 }, {
   timestamps: true,
 });

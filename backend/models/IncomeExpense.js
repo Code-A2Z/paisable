@@ -28,6 +28,10 @@ const incomeExpenseSchema = new mongoose.Schema({
     required: true,
     default: false, // false for expense, true for income
   },
+  note: {
+    type: String,
+    default: ''
+  },
   isDeleted: {
     type: Boolean,
     required: true,
