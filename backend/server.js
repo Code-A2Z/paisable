@@ -7,6 +7,9 @@ const axios = require('axios');
 const cron = require('node-cron');
 require('./cron');
 
+// securityMiddleware
+const { securityMiddleware } = require('./middleware/security');
+
 // Load environment variables
 dotenv.config();
 
@@ -15,20 +18,23 @@ connectDB();
 
 const app = express();
 
+// securityMiddleware
+securityMiddleware(app);
+
 const allowedOrigins = [
-  "http://localhost:5173",
-  "https://paisable.netlify.app",
+    "http://localhost:5173",
+    "https://paisable.netlify.app",
 ];
 
 app.use(cors({
-  origin: function (origin, callback) {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error("Not allowed by CORS"));
-    }
-  },
-  credentials: true
+    origin: function(origin, callback) {
+        if (!origin || allowedOrigins.includes(origin)) {
+            callback(null, true);
+        } else {
+            callback(new Error("Not allowed by CORS"));
+        }
+    },
+    credentials: true
 }));
 app.use(express.json());
 
@@ -44,28 +50,28 @@ app.use('/api/recurring', require('./routes/recurringTransactionRoutes'));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 app.get('/', (req, res) => {
-  res.send('API is Running');
+    res.send('API is Running');
 });
 
 const PORT = process.env.PORT || 5000;
 
 const server = app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
 
-cron.schedule("*/10 * * * *", async () => {
-  const keepAliveUrl = process.env.KEEP_ALIVE_URL;
-  if (!keepAliveUrl) {
-    console.error(
-      "KEEP_ALIVE_URL environment variable is not set. Skipping keep-alive ping."
-    );
-    return;
-  }
+cron.schedule("*/10 * * * *", async() => {
+    const keepAliveUrl = process.env.KEEP_ALIVE_URL;
+    if (!keepAliveUrl) {
+        console.error(
+            "KEEP_ALIVE_URL environment variable is not set. Skipping keep-alive ping."
+        );
+        return;
+    }
 
-  try {
-    await axios.get(keepAliveUrl);
-    console.log("Keep-alive ping sent!");
-  } catch (error) {
-    console.error("Keep-alive FAILED!", error.message);
-  }
+    try {
+        await axios.get(keepAliveUrl);
+        console.log("Keep-alive ping sent!");
+    } catch (error) {
+        console.error("Keep-alive FAILED!", error.message);
+    }
 });
 
 module.exports = { app, server };
