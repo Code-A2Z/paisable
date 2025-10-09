@@ -7,6 +7,9 @@ const axios = require('axios');
 const cron = require('node-cron');
 require('./cron');
 
+// securityMiddleware
+const { securityMiddleware } = require('./middleware/security');
+
 // Load environment variables
 dotenv.config();
 
@@ -14,6 +17,9 @@ dotenv.config();
 connectDB();
 
 const app = express();
+
+// securityMiddleware
+securityMiddleware(app);
 
 const allowedOrigins = [
   "http://localhost:5173",
