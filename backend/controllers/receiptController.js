@@ -100,7 +100,7 @@ const saveTransactionFromReceipt = async (req, res) => {
 
     const savedTransaction = await newTransaction.save();
 
-    // update the receipt with the final confirmed data
+    // Update the receipt with the final confirmed data
     receipt.extractedData = {
       merchant: transactionData.name,
       amount: transactionData.cost,

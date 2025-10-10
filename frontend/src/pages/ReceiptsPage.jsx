@@ -65,7 +65,7 @@ const ReceiptsPage = () => {
     }
   };
 
-  const handleEditReceiptSubmit = async (formData, transactionId) => {
+  const handleEditReceiptSubmit = async (formData) => {
     try {
       // Update the receiptResult with the edited data
       const updatedReceiptResult = {
