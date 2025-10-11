@@ -11,9 +11,7 @@ require('./cron');
 dotenv.config();
 
 // Connect to database
-if (process.env.NODE_ENV !== 'test') {
-	connectDB();
-}
+connectDB();
 
 const app = express();
 
@@ -74,4 +72,5 @@ cron.schedule("*/10 * * * *", async () => {
   }
 });
 
+module.exports = { app, server };
 module.exports = { app, server };

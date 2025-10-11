@@ -24,9 +24,7 @@
     "jsonwebtoken": "^9.0.2",
     "mongodb": "^6.19.0",
     "mongoose": "^8.18.1",
-    "multer": "^2.0.2",
-    "node-cron": "^4.2.1",
-    "papaparse": "^5.5.3"
+    "multer": "^2.0.2"
   },
   "devDependencies": {
     "jest": "^29.7.0",
