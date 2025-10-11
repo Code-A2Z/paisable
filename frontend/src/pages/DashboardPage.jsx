@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import api from '../api/axios';
 import CategoryPieChart from '../components/CategoryPieChart';
 import ActivityBarChart from '../components/ActivityBarChart';
+import LineChart from '../components/LineChart';
 import TransactionModal from '../components/TransactionModal';
 import useCurrency from '../hooks/useCurrency';
 import useTheme from '../hooks/useTheme';
@@ -56,6 +57,7 @@ const DashboardPage = () => {
           api.get('/transactions/categories/expense'),
           api.get('/transactions/categories/income')
         ]);
+      console.log(chartRes)
       setSummaryData(summaryRes.data);
       setChartData(chartRes.data);
       setExpenseCategories(expenseCategoriesRes.data);
@@ -124,14 +126,14 @@ const DashboardPage = () => {
         <SummaryCard title="Current Balance" value={summaryData.balance} bgColor="bg-blue-200" loading={loading} />
       </div>
 
-      <div className="mt-10 grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <div className="my-10 grid grid-cols-1 lg:grid-cols-2 gap-8">
         <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
           <h2 className="text-xl font-bold text-gray-800 dark:text-gray-200 mb-4">Expenses by Category</h2>
           {loading ? <Spinner /> : chartData?.expensesByCategory.length > 0 ? (
-    <CategoryPieChart data={chartData.expensesByCategory} theme={theme} />
-  ) : (
-       <EmptyState message="No expense data to display." icon={<IoWarning className="w-6 h-6 text-yellow-500" />}/>
-  )}
+            <CategoryPieChart data={chartData.expensesByCategory} theme={theme} />
+          ) : (
+            <EmptyState message="No expense data to display." icon={<IoWarning className="w-6 h-6 text-yellow-500" />} />
+          )}
         </div>
         <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
           <h2 className="text-xl font-bold text-gray-800 dark:text-gray-200 mb-4">Recent Activity</h2>
@@ -143,7 +145,7 @@ const DashboardPage = () => {
                 theme={theme}
               />
             ) : (
-              <EmptyState message="No recent activity to display."/>
+              <EmptyState message="No recent activity to display." />
             )}
           </div>
 
@@ -165,6 +167,22 @@ const DashboardPage = () => {
               </ul>
             ) : <p className="text-gray-500 dark:text-gray-400 mt-2">No recent transactions.</p>}
           </div>
+        </div>
+        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md h-[500px]">
+          <h2 className="text-xl font-bold text-gray-800 dark:text-gray-200 mb-4">Income Vs Time</h2>
+          {loading ? <Spinner /> : chartData?.incomeOverTime.length > 0 ? (
+            <LineChart label={"Income"} data={chartData.incomeOverTime} theme={theme} />
+          ) : (
+            <EmptyState message="No income data to display." icon={<IoWarning className="w-6 h-6 text-yellow-500" />} />
+          )}
+        </div>
+        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md h-[500px]">
+          <h2 className="text-xl font-bold text-gray-800 dark:text-gray-200 mb-4">Expense Vs Time</h2>
+          {loading ? <Spinner /> : chartData?.expensesOverTime.length > 0 ? (
+            <LineChart label={"Expenses"} data={chartData.expensesOverTime} theme={theme} />
+          ) : (
+            <EmptyState message="No income data to display." icon={<IoWarning className="w-6 h-6 text-yellow-500" />} />
+          )}
         </div>
       </div>
 

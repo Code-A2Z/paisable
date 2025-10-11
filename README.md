@@ -198,6 +198,12 @@ You can:
 * Publish Directory: `dist`
 * Environment Variable: `VITE_API_URL=https://your-backend.onrender.com/api`
 
+## Contributing
+
+Contributions are what make the open-source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
+
+Please refer to our [Contributing Guide](CONTRIBUTING.md) for detailed instructions on how to get started with your contribution.
+
 ## License
 
 This project is licensed under the [MIT License](LICENSE).

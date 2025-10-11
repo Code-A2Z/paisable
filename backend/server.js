@@ -7,6 +7,9 @@ const axios = require('axios');
 const cron = require('node-cron');
 require('./cron');
 
+// import the sanitizeMiddleware
+const { sanitizeMiddleware } = require("./middleware/sanitizeMiddleware")
+
 // Load environment variables
 dotenv.config();
 
@@ -34,6 +37,9 @@ app.use(
 );
 app.use(express.json());
 
+// sanitizeMiddleware
+app.use(sanitizeMiddleware());
+
 // Routes
 app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/transactions', require('./routes/transactionRoutes'));
@@ -55,7 +61,7 @@ const server = app.listen(PORT, () =>
 	console.log(`Server started on port ${PORT}`)
 );
 
-cron.schedule("*/10 * * * *", async () => {
+cron.schedule("*/10 * * * *", async() => {
   const keepAliveUrl = process.env.KEEP_ALIVE_URL;
   if (!keepAliveUrl) {
     console.error(
