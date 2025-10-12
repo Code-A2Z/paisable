@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import useAuth from '../hooks/useAuth';
 import PasswordInput from '../components/PasswordInput';
+import startOAuth from '../hooks/useAuth';
 
 export default function RegisterPage() {
   const [email, setEmail] = useState('');
@@ -57,7 +58,7 @@ export default function RegisterPage() {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-900 px-4">
-      <Link to="/" className="text-4xl font-bold text-blue-600 dark:text-blue-400 font-montserrat mb-8 transition-all duration-500 hover:scale-105 hover:drop-shadow-lg hover:text-blue-500 dark:hover:text-blue-300 cursor-pointer" title="Go to home">
+      <Link to="/" className="text-4xl font-bold text-blue-600 dark:text-blue-400 font-montserrat mb-8">
         Paisable
       </Link>
       <div className="px-8 py-6 text-left bg-white dark:bg-gray-800 shadow-lg rounded-lg w-full max-w-md">
@@ -90,6 +91,28 @@ export default function RegisterPage() {
             <div className="flex">
               <button type="submit" className="w-full px-6 py-2 mt-4 text-white bg-blue-600 rounded-lg hover:bg-blue-900">
                 Create Account
+              </button>
+            </div>
+            <div className="flex items-center mt-6 mb-4">
+              <hr className="flex-grow border-gray-300 dark:border-gray-600" />
+              <span className="px-4 text-sm text-gray-500 dark:text-gray-400">or sign in using</span>
+              <hr className="flex-grow border-gray-300 dark:border-gray-600" />
+            </div>
+            <div className="flex justify-center gap-4">
+              <button type="button" onClick={()=> startOAuth('google')} className="p-2 rounded-lg bg-blue-600 hover:bg-blue-900 transition-colors duration-300">
+                <img src="/google.svg" alt="Google" className="w-6 h-6" />
+              </button>
+              <button type="button" onClick={()=> startOAuth('apple')} className="p-2 rounded-lg bg-blue-600 hover:bg-blue-900 transition-colors duration-300">
+                <img src="/apple.svg" alt="GitHub" className="w-6 h-6" />
+              </button>
+              <button type="button" onClick={()=> startOAuth('microsoft')} className="p-2 rounded-lg bg-blue-600 hover:bg-blue-900 transition-colors duration-300">
+                <img src="/microsoft.svg" alt="Apple" className="w-6 h-6" />
+              </button>
+              <button type="button" onClick={()=> startOAuth('facebook')} className="p-2 rounded-lg bg-blue-600 hover:bg-blue-900 transition-colors duration-300">
+                <img src="/facebook.svg" alt="Facebook" className="w-6 h-6" />
+              </button>
+              <button type="button" onClick={()=> startOAuth('twitter')} className="p-2 rounded-lg bg-blue-600 hover:bg-blue-900 transition-colors duration-300">
+                <img src="/twitter.svg" alt="Twitter" className="w-6 h-6" />
               </button>
             </div>
             <div className="mt-6 text-gray-600 dark:text-gray-400">

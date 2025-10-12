@@ -1,7 +1,7 @@
 import React, { createContext, useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
-import api from '../api/axios';
+import api, { setAuthToken, clearAuthToken } from '../api/axios';
 
 const AuthContext = createContext();
 
@@ -85,6 +85,29 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const loginWithOAuth = async (jwtToken) => {
+    try {
+      // Save the token and set authorization header
+      localStorage.setItem('token', jwtToken);
+      setToken(jwtToken);
+      setAuthToken(jwtToken);
+
+      // Fetch user profile from backend
+      const response = await api.get('/auth/me');
+      setUser(response.data);
+
+      setPendingToast({ type: 'success', message: 'Login successful!' });
+      navigate('/dashboard');
+    } catch (error) {
+      console.error('OAuth login failed', error);
+      localStorage.removeItem('token');
+      setToken(null);
+      setUser(null);
+      setPendingToast({ type: 'error', message: 'OAuth login failed. Please try again.' });
+      navigate('/login');
+    }
+  };
+
   const logout = () => {
     setPendingToast({ type: 'info', message: 'Logged out successfully.' });
     setUser(null);
@@ -108,7 +131,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, token, loading, login, signup, logout, setup }}>
+    <AuthContext.Provider value={{ user, token, loading, login, signup, logout, setup, loginWithOAuth }}>
       {children}
     </AuthContext.Provider>
   );
