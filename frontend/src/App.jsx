@@ -15,6 +15,7 @@ import Layout from './components/Layout';
 import ProtectedRoute from './components/ProtectedRoute';
 import SetupProtectedRoute from './components/SetupProtectedRoute';
 import RecurringTransactions from './pages/RecurringTransactions';
+import AuthCallbackPage from './pages/AuthCallbackPage';
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/contact" element={<ContactUs />} />
+        <Route path="/auth/callback" element={<AuthCallbackPage />} />
         {/* Protected Routes */}
         <Route
           path="/setup"
