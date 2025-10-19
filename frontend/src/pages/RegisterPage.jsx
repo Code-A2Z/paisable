@@ -57,7 +57,7 @@ export default function RegisterPage() {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-900 px-4">
-      <Link to="/" className="text-4xl font-bold text-blue-600 dark:text-blue-400 font-montserrat mb-8">
+      <Link to="/" className="text-4xl font-bold text-blue-600 dark:text-blue-400 font-montserrat mb-8 transition-all duration-500 hover:scale-105 hover:drop-shadow-lg hover:text-blue-500 dark:hover:text-blue-300 cursor-pointer" title="Go to home">
         Paisable
       </Link>
       <div className="px-8 py-6 text-left bg-white dark:bg-gray-800 shadow-lg rounded-lg w-full max-w-md">

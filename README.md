@@ -13,8 +13,8 @@ Paisable is a **full-stack personal finance management app** built with **React 
 
 ## Deployment Links
 
-* Frontend: https://paisable.netlify.app/
-* Backend: https://paisable.onrender.com
+* Frontend: [Netlify](https://paisable.netlify.app/)
+* Backend: [Render](https://paisable.onrender.com)
 
 ## Tech Stack
 
@@ -86,7 +86,9 @@ Paisable is a **full-stack personal finance management app** built with **React 
 ## Getting Started
 
 ### Fork the repository
+
 Before cloning, make sure to fork the repository to your GitHub account.
+
 1. Go to the GitHub repo page: https://github.com/Code-A2Z/paisable
 2. Click Fork in the top-right corner.
 
@@ -111,7 +113,7 @@ PORT=5000
 MONGO_URI=your-mongodb-atlas-uri
 JWT_SECRET=your-secret-key
 GEMINI_API_KEY=your-gemini-api-key
-KEEP_ALIVE_URL=http://localhost:5000 
+KEEP_ALIVE_URL=http://localhost:5000
 ```
 
 Start the backend:
@@ -182,6 +184,7 @@ You can:
 * `POST /api/receipts/upload` → Upload receipt, trigger Gemini OCR, and create a transaction in one step
 
 ### Users
+
 * `DELETE /api/users/account` → Delete the authenticated user account permanently
 
 ## Deployment
@@ -198,6 +201,27 @@ You can:
 * Publish Directory: `dist`
 * Environment Variable: `VITE_API_URL=https://your-backend.onrender.com/api`
 
+## Contributing
+
+Contributions are what make the open-source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
+
+Please refer to our [Contributing Guide](CONTRIBUTING.md) for detailed instructions on how to get started with your contribution.
+
+## Contributors
+
+We'd like to extend our heartfelt thanks to everyone who has contributed to **Paisable** — whether through code, design, documentation, bug reports, or ideas. Your efforts make this project better for everyone. 💖
+
+<a href="https://github.com/Code-A2Z/paisable/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=Code-A2Z/paisable" />
+</a>
+
+### 🙌 Individual Acknowledgments
+
+* [@archa8](https://github.com/archa8) – Project Developer & Maintainer
+* [@Avdhesh-Varshney](https://github.com/Avdhesh-Varshney) - Maintainer
+
+> Want to see your name here? Check out our [Contributing Guide](CONTRIBUTING.md) and submit your first pull request!
+
 ## License
 
 This project is licensed under the [MIT License](LICENSE).
@@ -205,6 +229,3 @@ This project is licensed under the [MIT License](LICENSE).
 ## Author
 
 Developed by [**Archa**](https://github.com/archa8)
-
-
-
