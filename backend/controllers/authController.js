@@ -1,6 +1,8 @@
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
+const crypto=require('crypto');
+const sendEmail=require('../utils/sendEmail');
 
 // Function to generate JWT
 const generateToken = (id) => {
@@ -113,9 +115,58 @@ const completeSetup = async (req, res) => {
   }
 };
 
+const forgotPassword=async (req,res)=>{
+  const {email}=req.body;
+  try {
+    const user=await User.findOne({email})
+    if(!user){
+      return res.status(404).json({message:'User not found'});
+    }
+    const resetToken=crypto.randomBytes(32).toString('hex');
+    const hashedToken=crypto.createHash('sha256').update(resetToken).digest('hex');
+    user.resetPasswordToken=hashedToken;
+    user.resetPasswordExpires=Date.now()+15*60*1000;
+    await user.save();
+    const resetUrl=`${process.env.FRONTEND_URL}/reset-password?token=${resetToken}`;
+    await sendEmail({
+      to:user.email,
+      subject:'Password Reset Request',
+      text:`You requested a password reset. Please click the link to reset your password: ${resetUrl}`
+    })
+    res.status(200).json({message:'Password reset email sent'});  
+  } catch (error) {
+    res.status(500).json({message:'Server Error',error:error.message});    
+  }
+}
+
+const resetPassword=async (req,res)=>{
+  const {token,newPassword}=req.body;
+  const user='';
+  try{
+    const hashedToken=crypto.createHash('sha256').update(token).digest('hex');
+     user=await User.findOne({
+      resetPasswordToken:hashedToken,
+      resetPasswordExpires:{$gt:Date.now()}
+    })
+  }
+  catch(error){
+    res.status(500).json({message:'Server Error',error:error.message});
+  }
+  if(!user){
+    return res.status(400).json({message:'Invalid or expired token'})
+  }
+  user.password=newPassword;
+  user.resetPasswordToken=null;
+  user.resetPasswordExpires=null;
+  await user.save();
+  res.status(200).json({message:'Password reset successful'});
+}
+
 module.exports = {
   signup,
   login,
   getMe,
   completeSetup,
+  forgotPassword,
+  resetPassword
 };

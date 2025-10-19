@@ -46,10 +46,11 @@ export default function LoginPage() {
               <label className="block text-gray-700 dark:text-gray-300" htmlFor="email">Email</label>
               <input type="email" placeholder="Email" className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-blue-600 dark:border-gray-600" id="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
             </div>
-            <div className="mt-4">
+            <div className="mt-4 mb-3">
               <label className="block text-gray-700 dark:text-gray-300" htmlFor="password">Password</label>
               <PasswordInput value={password} onChange={(e) => setPassword(e.target.value)} />
             </div>
+            <Link to='/forgot-password' className='text-blue-500 flex justify-end'>Forgot Password?</Link>
             <div className="flex flex-col gap-4 mt-4">
               <button type="submit" className="w-full px-6 py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700">Login</button>
               {/*<button 
