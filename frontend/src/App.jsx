@@ -15,7 +15,7 @@ import Layout from './components/Layout';
 import ProtectedRoute from './components/ProtectedRoute';
 import SetupProtectedRoute from './components/SetupProtectedRoute';
 import RecurringTransactions from './pages/RecurringTransactions';
-
+import Footer from './components/Footer';
 function App() {
   return (
     <>
@@ -53,6 +53,7 @@ function App() {
           />
         </Route>
       </Routes>
+      <Footer />
       <ToastContainer />
     </>
   );
