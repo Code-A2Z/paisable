@@ -86,11 +86,11 @@ export default function LoginPage() {
             <div className="flex flex-col gap-4 mt-4">
               <button
                 type="submit"
-                className={`w-full px-6 py-2 text-white bg-blue-600 rounded-lg 
+                className={`w-full px-6 py-2 text-white  rounded-lg 
     ${
       loading
         ? "bg-blue-400 cursor-not-allowed" // Added utility classes for disabled state
-        : "hover:bg-blue-700"
+        : "bg-blue-600 hover:bg-blue-700"
     }`}
                 disabled={loading}
               >
