@@ -15,19 +15,24 @@ const EyeSlashedIcon = () => (
 );
 
 
-const PasswordInput = ({ value, onChange, placeholder = "Password", id = "password", error }) => {
+const PasswordInput = ({ value, onChange, placeholder = "Password", id = "password", error, className }) => {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
   const togglePasswordVisibility = () => {
     setIsPasswordVisible(prevState => !prevState);
   };
 
+  // Default classes if no className is provided
+  const defaultClasses = "w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-1";
+  const errorClasses = error ? 'border-red-500 focus:ring-red-500' : 'focus:ring-blue-600 dark:border-gray-600';
+  const inputClasses = `${defaultClasses} ${errorClasses} ${className ?? ''}`;
+
   return (
     <div className="relative">
       <input
         type={isPasswordVisible ? 'text' : 'password'}
         placeholder={placeholder}
-        className={`w-full px-4 py-2 pr-10 mt-2 border rounded-md focus:outline-none focus:ring-1 ${error ? 'border-red-500 focus:ring-red-500' : 'focus:ring-blue-600 dark:border-gray-600'}`}
+        className={`${inputClasses} pr-10`}
         id={id}
         value={value}
         onChange={onChange}
@@ -35,8 +40,9 @@ const PasswordInput = ({ value, onChange, placeholder = "Password", id = "passwo
       />
       <button
         type="button"
-        className="absolute inset-y-0 right-0 top-1 flex items-center pr-3 text-gray-400 hover:text-gray-600"
+        className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors duration-200"
         onClick={togglePasswordVisibility}
+        aria-label={isPasswordVisible ? "Hide password" : "Show password"}
       >
         {isPasswordVisible ? <EyeSlashedIcon /> : <EyeIcon />}
       </button>
