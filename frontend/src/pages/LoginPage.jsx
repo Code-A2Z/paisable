@@ -14,14 +14,12 @@ export default function LoginPage() {
   const [serverError, setServerError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const { login } = useAuth();
-  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setServerError(''); // Clear previous server errors
     setIsLoading(true);
     try {
-      setLoading(true);
       await login(email, password);
       // Toast handled globally in AuthContext
     } catch (error) {
@@ -30,7 +28,6 @@ export default function LoginPage() {
     } finally {
       setIsLoading(false);
     }
-    setLoading(false);
   };
 
   /* const handleFillDemoCredentials = () => {

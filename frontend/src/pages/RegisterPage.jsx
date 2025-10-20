@@ -73,14 +73,12 @@ export default function RegisterPage() {
     setIsLoading(true);
     
     try {
-      setLoading(true);
       await signup(email, password);
     } catch (error) {
       setServerError(error.message);
     } finally {
       setIsLoading(false);
     }
-    setLoading(false);
   };
 
   const PasswordCriterion = ({ met, text }) => (
