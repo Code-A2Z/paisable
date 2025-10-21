@@ -15,7 +15,7 @@ import Layout from './components/Layout';
 import ProtectedRoute from './components/ProtectedRoute';
 import SetupProtectedRoute from './components/SetupProtectedRoute';
 import RecurringTransactions from './pages/RecurringTransactions';
-import { PublicRoute } from './components/gaurds';
+import { PublicRoute } from './components/PublicRoute';
 
 function App() {
   return (
