@@ -1,0 +1,26 @@
+name: "PR Labeler for Hacktoberfest"
+
+on:
+  pull_request_target:
+    types: [closed]
+
+jobs:
+  add-labels:
+    name: Add labels to Merged PR
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+
+    steps:
+      - name: Checkout base branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.base.sha }}
+
+      - name: Label PR based on files changed
+        uses: actions/labeler@v5
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          configuration-path: .github/labeler.yml
