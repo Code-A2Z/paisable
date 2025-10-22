@@ -108,13 +108,19 @@ const saveTransactionFromReceipt = async (req, res) => {
       return res.status(404).json({ message: 'Receipt not found' });
     }
 
+    // Validate and parse the date
+    const transactionDate = new Date(transactionData.addedOn);
+    if (isNaN(transactionDate.getTime())) {
+      return res.status(400).json({ message: 'Invalid date format provided' });
+    }
+
     // Create the transaction with user-confirmed data
     const newTransaction = new IncomeExpense({
       user: req.user.id,
       name: transactionData.name,
       category: transactionData.category,
       cost: transactionData.cost,
-      addedOn: new Date(transactionData.addedOn),
+      addedOn: transactionDate,
       isIncome: transactionData.isIncome || false,
     });
 
@@ -125,7 +131,7 @@ const saveTransactionFromReceipt = async (req, res) => {
       merchant: transactionData.name,
       amount: transactionData.cost,
       category: transactionData.category,
-      date: new Date(transactionData.addedOn),
+      date: transactionDate,
       isIncome: transactionData.isIncome || false,
     };
     await receipt.save();

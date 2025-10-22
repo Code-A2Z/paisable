@@ -65,26 +65,21 @@ const ReceiptsPage = () => {
     }
   };
 
-  const handleEditReceiptSubmit = async (formData) => {
-    try {
-      // Update the receiptResult with the edited data
-      const updatedReceiptResult = {
-        ...receiptResult,
-        extractedData: {
-          merchant: formData.name,
-          amount: parseFloat(formData.cost),
-          category: formData.category,
-          date: formData.addedOn,
-          isIncome: formData.isIncome
-        }
-      };
-      
-      setReceiptResult(updatedReceiptResult);
-      setOpenEditReceiptResult(false);
-    } catch (err) {
-      setError('Failed to update receipt data. Please try again.');
-      console.error(err);
-    }
+  const handleEditReceiptSubmit = (formData) => {
+    // Update the receiptResult with the edited data
+    const updatedReceiptResult = {
+      ...receiptResult,
+      extractedData: {
+        merchant: formData.name,
+        amount: parseFloat(formData.cost) || 0,
+        category: formData.category,
+        date: formData.addedOn,
+        isIncome: formData.isIncome
+      }
+    };
+    
+    setReceiptResult(updatedReceiptResult);
+    setOpenEditReceiptResult(false);
   };
 
   // Handle final save to database (second verification step)
@@ -156,7 +151,7 @@ const ReceiptsPage = () => {
             <div>
               <div className="mb-4">
                 <p className="text-gray-700 dark:text-gray-300"><strong>Merchant:</strong> {receiptResult.extractedData.merchant}</p>
-                <p className="text-gray-700 dark:text-gray-300"><strong>Amount:</strong> {receiptResult.extractedData.amount.toFixed(2)}</p>
+                <p className="text-gray-700 dark:text-gray-300"><strong>Amount:</strong> {(parseFloat(receiptResult.extractedData.amount) || 0).toFixed(2)}</p>
                 <p className="text-gray-700 dark:text-gray-300"><strong>Category:</strong> {receiptResult.extractedData.category}</p>
                 <p className="text-gray-700 dark:text-gray-300"><strong>Date:</strong> {new Date(receiptResult.extractedData.date).toLocaleDateString()}</p>
                 {receiptResult.extractedData.isIncome && (
