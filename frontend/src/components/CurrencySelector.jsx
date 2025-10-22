@@ -23,7 +23,7 @@ const CurrencySelector = () => {
     <div className="relative">
       <button 
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 px-3 py-2 bg-gray-100 rounded-md hover:bg-gray-200"
+        className="flex items-center gap-2 md:px-3 md:py-2 px-3 py-1 bg-gray-100 rounded-md hover:bg-gray-200"
       >
         <span>{currency.flag}</span>
         <span className="font-medium text-sm">{currency.code}</span>
