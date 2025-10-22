@@ -1,5 +1,6 @@
 import axios from "axios";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 export default function ForgotPasswordPage() {
     const [email, setEmail] = useState('');
@@ -20,6 +21,13 @@ export default function ForgotPasswordPage() {
 
     return (
         <div className="flex flex-col justify-center items-center px-4 min-h-screen bg-gray-100 dark:bg-gray-900">
+            <Link
+                to="/"
+                className="text-5xl font-bold bg-gradient-to-r from-blue-600 to-blue-500 dark:from-blue-400 dark:to-blue-300 bg-clip-text text-transparent mb-12 transition-all duration-500 hover:scale-105 hover:drop-shadow-2xl cursor-pointer animate-fade-in"
+                title="Go to home">
+                Paisable
+            </Link>
+
             <div className="w-full max-w-md p-8 rounded-md bg-white dark:bg-gray-800 shadow-lg">
                 <h2 className="flex justify-center text-2xl text-white">Forgot Password</h2>
                 {serverError && <p className="text-center text-red-500 bg-red-100 dark:bg-red-900 p-2 rounded-md my-4">{serverError}</p>}

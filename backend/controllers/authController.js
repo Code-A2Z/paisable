@@ -2,7 +2,8 @@ const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const crypto=require('crypto');
-const sendEmail=require('../utils/sendEmail');
+const {sendEmail}=require('../utils');
+
 
 // Function to generate JWT
 const generateToken = (id) => {
@@ -141,25 +142,27 @@ const forgotPassword=async (req,res)=>{
 
 const resetPassword=async (req,res)=>{
   const {token,newPassword}=req.body;
-  const user='';
+  
   try{
     const hashedToken=crypto.createHash('sha256').update(token).digest('hex');
-     user=await User.findOne({
+    const user = await User.findOne({
       resetPasswordToken:hashedToken,
       resetPasswordExpires:{$gt:Date.now()}
-    })
+    });
+
+    if(!user){
+      return res.status(400).json({message:'Invalid or expired token'});
+    }
+
+    user.password=newPassword;
+    user.resetPasswordToken=null;
+    user.resetPasswordExpires=null;
+    await user.save();
+    res.status(200).json({message:'Password reset successful'});
   }
   catch(error){
     res.status(500).json({message:'Server Error',error:error.message});
   }
-  if(!user){
-    return res.status(400).json({message:'Invalid or expired token'})
-  }
-  user.password=newPassword;
-  user.resetPasswordToken=null;
-  user.resetPasswordExpires=null;
-  await user.save();
-  res.status(200).json({message:'Password reset successful'});
 }
 
 module.exports = {
