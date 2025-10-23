@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import useCurrency from '../hooks/useCurrency';
 import useAuth from '../hooks/useAuth';
 
@@ -6,6 +6,7 @@ const CurrencySelector = () => {
   const { currency, changeCurrency, supportedCurrencies } = useCurrency();
   const { user } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef(null);
 
   useEffect(() => {
     if (user?.defaultCurrency) {
@@ -14,13 +15,26 @@ const CurrencySelector = () => {
     }
   }, [user]);
 
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
   const handleSelect = (code) => {
     changeCurrency(code);
     setIsOpen(false);
   };
 
   return (
-    <div className="relative">
+    <div className="relative" ref={dropdownRef}>
       <button 
         onClick={() => setIsOpen(!isOpen)}
         className="flex items-center gap-2 px-3 py-2 bg-gray-100 rounded-md hover:bg-gray-200"
