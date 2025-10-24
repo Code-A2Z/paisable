@@ -208,6 +208,13 @@ const getChartData = async (req, res) => {
       { $project: { name: '$_id', total: 1, _id: 0 } }
     ]);
 
+    // Data for Income by Category (Pie Chart)
+    const incomeByCategory = await IncomeExpense.aggregate([
+      { $match: { user: userId, isIncome: true, isDeleted: false } },
+      { $group: { _id: '$category', total: { $sum: '$cost' } } },
+      { $project: { name: '$_id', total: 1, _id: 0 } }
+    ]);
+
     // Data for Expenses Over Time (Bar Chart)
     const expensesOverTime = await IncomeExpense.aggregate([
       { $match: { user: userId, isIncome: false, isDeleted: false, addedOn: { $gte: thirtyDaysAgo } } },
@@ -234,7 +241,7 @@ const getChartData = async (req, res) => {
       { $project: { date: '$_id', total: 1, _id: 0 } }
     ]);
 
-    res.json({ expensesByCategory, expensesOverTime, incomeOverTime });
+    res.json({ expensesByCategory, incomeByCategory, expensesOverTime, incomeOverTime });
   } catch (error) {
     // Also log the error to the backend console for easier debugging
     console.error('Error in getChartData:', error);

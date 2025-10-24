@@ -39,6 +39,7 @@ const DashboardPage = () => {
     balance: 0,
   });
   const [chartData, setChartData] = useState(null);
+  const [categoryView, setCategoryView] = useState('expense'); // 'expense' | 'income'
   const [recentTransactions, setRecentTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -128,11 +129,41 @@ const DashboardPage = () => {
 
       <div className="my-10 grid grid-cols-1 lg:grid-cols-2 gap-8">
         <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
-          <h2 className="text-xl font-bold text-gray-800 dark:text-gray-200 mb-4">Expenses by Category</h2>
-          {loading ? <Spinner /> : chartData?.expensesByCategory.length > 0 ? (
-            <CategoryPieChart data={chartData.expensesByCategory} theme={theme} />
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-xl font-bold text-gray-800 dark:text-gray-200">
+              {categoryView === 'expense' ? 'Expenses by Category' : 'Income by Category'}
+            </h2>
+            <div className="inline-flex rounded-md shadow-sm" role="group" aria-label="Toggle category view">
+              <button
+                type="button"
+                className={`px-3 py-1 text-sm font-medium border rounded-l-md ${categoryView === 'expense' ? 'bg-blue-600 text-white border-blue-600' : 'bg-transparent text-gray-700 dark:text-gray-200 border-gray-300 dark:border-gray-600'}`}
+                onClick={() => setCategoryView('expense')}
+              >
+                Expense
+              </button>
+              <button
+                type="button"
+                className={`px-3 py-1 text-sm font-medium border-t border-b rounded-r-md ${categoryView === 'income' ? 'bg-green-600 text-white border-green-600' : 'bg-transparent text-gray-700 dark:text-gray-200 border-gray-300 dark:border-gray-600'}`}
+                onClick={() => setCategoryView('income')}
+              >
+                Income
+              </button>
+            </div>
+          </div>
+          {loading ? (
+            <Spinner />
+          ) : categoryView === 'expense' ? (
+            chartData?.expensesByCategory?.length > 0 ? (
+              <CategoryPieChart data={chartData.expensesByCategory} theme={theme} label={"Expenses by Category"} />
+            ) : (
+              <EmptyState message="No expense data to display." icon={<IoWarning className="w-6 h-6 text-yellow-500" />} />
+            )
           ) : (
-            <EmptyState message="No expense data to display." icon={<IoWarning className="w-6 h-6 text-yellow-500" />} />
+            chartData?.incomeByCategory?.length > 0 ? (
+              <CategoryPieChart data={chartData.incomeByCategory} theme={theme} label={"Income by Category"} />
+            ) : (
+              <EmptyState message="No income data to display." icon={<IoWarning className="w-6 h-6 text-yellow-500" />} />
+            )
           )}
         </div>
         <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">

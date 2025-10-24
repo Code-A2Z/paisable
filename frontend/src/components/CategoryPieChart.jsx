@@ -4,12 +4,12 @@ import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-const CategoryPieChart = ({ data, theme }) => {
+const CategoryPieChart = ({ data, theme, label = 'Expenses by Category' }) => {
   const chartData = {
     labels: data.map(d => d.name),
     datasets: [
       {
-        label: 'Expenses by Category',
+        label,
         data: data.map(d => d.total),
         backgroundColor: [
           'rgba(255, 99, 132, 0.7)',
