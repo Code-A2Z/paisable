@@ -142,7 +142,7 @@ const TransactionModal = ({ isOpen, onClose, onSubmit, transaction, expenseCateg
 
               <div className="mb-4">
                 <label className="block text-gray-700">Amount (Expense)</label>
-                <input type="number" name="cost" value={formData.cost} onChange={handleChange} className="w-full px-3 py-2 border rounded" required />
+                <input type="number" name="cost" value={formData.cost} onChange={handleChange} className="w-full px-3 py-2 border rounded" required min="0" />
               </div>
 
               <div className="mb-4">
@@ -185,7 +185,7 @@ const TransactionModal = ({ isOpen, onClose, onSubmit, transaction, expenseCateg
 
               <div className="mb-4">
                 <label className="block text-gray-700">Amount (Income)</label>
-                <input type="number" name="cost" value={formData.cost} onChange={handleChange} className="w-full px-3 py-2 border rounded" required />
+                <input type="number" name="cost" value={formData.cost} onChange={handleChange} className="w-full px-3 py-2 border rounded" required min="0" />
               </div>
 
               <div className="mb-4">
