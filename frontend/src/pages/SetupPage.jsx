@@ -66,7 +66,7 @@ const SetupPage = () => {
                     className="sr-only"
                   />
                   <div className="flex items-center space-x-3">
-                    <span className="text-2xl">{currency.flag}</span>
+                    <span className="text-2xl text-black dark:text-white">{currency.flag}</span>
                     <div>
                       <div className="font-medium text-gray-900 dark:text-white">
                         {currency.name}
