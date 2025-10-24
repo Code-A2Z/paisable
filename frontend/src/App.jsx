@@ -9,6 +9,7 @@ import TransactionsPage from './pages/TransactionsPage';
 import ReceiptsPage from './pages/ReceiptsPage';
 import WelcomePage from './pages/WelcomePage';
 import SettingsPage from './pages/SettingsPage';
+import NotFound from './pages/NotFound';
 import Budgets from './pages/Budgets';
 import ContactUs from './pages/ContactUs';
 import Layout from './components/Layout';
@@ -52,6 +53,7 @@ function App() {
             element={<RecurringTransactions />}
           />
         </Route>
+        <Route path="*" element={<NotFound />} />
       </Routes>
       <ToastContainer />
     </>
