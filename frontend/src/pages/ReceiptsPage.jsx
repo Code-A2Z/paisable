@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../api/axios';
+import TransactionModal from '../components/TransactionModal';
 
 const ReceiptsPage = () => {
   const [file, setFile] = useState(null);
@@ -8,6 +9,25 @@ const ReceiptsPage = () => {
   const [receiptResult, setReceiptResult] = useState(null);
   const [error, setError] = useState('');
   const navigate = useNavigate();
+
+  const [openEditReceiptResult, setOpenEditReceiptResult] = useState(false);
+  const [categories, setCategories] = useState([]);
+  const [isEditingResult, setIsEditingResult] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+
+  // Fetch categories when component mounts
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await api.get('/transactions/categories');
+        setCategories(response.data);
+      } catch (error) {
+        console.error('Failed to fetch categories:', error);
+      }
+    };
+    
+    fetchCategories();
+  }, []);
 
   const handleFileChange = (e) => {
     setFile(e.target.files[0]);
@@ -34,14 +54,70 @@ const ReceiptsPage = () => {
         },
       });
       setReceiptResult(response.data);
-      alert('Receipt processed successfully and transaction created! Redirecting to dashboard...');
-      navigate('/dashboard');
+      
+      // Open the modal to allow user to edit the extracted data
+      setOpenEditReceiptResult(true);
     } catch (err) {
       setError('Upload failed. Please try again.');
       console.error(err);
     } finally {
       setUploading(false);
     }
+  };
+
+  const handleEditReceiptSubmit = (formData) => {
+    // Update the receiptResult with the edited data
+    const updatedReceiptResult = {
+      ...receiptResult,
+      extractedData: {
+        merchant: formData.name,
+        amount: parseFloat(formData.cost) || 0,
+        category: formData.category,
+        date: formData.addedOn,
+        isIncome: formData.isIncome
+      }
+    };
+    
+    setReceiptResult(updatedReceiptResult);
+    setOpenEditReceiptResult(false);
+  };
+
+  // Handle final save to database (second verification step)
+  const handleFinalSave = async () => {
+    try {
+      setIsSaving(true);
+      
+      const transactionData = {
+        name: receiptResult.extractedData.merchant,
+        category: receiptResult.extractedData.category,
+        cost: receiptResult.extractedData.amount,
+        addedOn: receiptResult.extractedData.date,
+        isIncome: receiptResult.extractedData.isIncome || false
+      };
+
+      const response = await api.post('/receipts/save-transaction', {
+        receiptId: receiptResult._id,
+        transactionData: transactionData
+      });
+
+      alert('Transaction saved successfully! Redirecting to dashboard...');
+      navigate('/dashboard');
+    } catch (err) {
+      setError('Failed to save transaction. Please try again.');
+      console.error(err);
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  // Handle edit button in result div
+  const handleEditResult = () => {
+    setIsEditingResult(true);
+    setOpenEditReceiptResult(true);
+  };
+
+  const handleNewCategory = (newCategory) => {
+    setCategories(prev => [...prev, newCategory].sort());
   };
 
   return (
@@ -63,7 +139,7 @@ const ReceiptsPage = () => {
               disabled={uploading}
               className="mt-4 w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-blue-300"
             >
-              {uploading ? 'Processing...' : 'Upload & Create Transaction'}
+              {uploading ? 'Processing...' : 'Upload & Extract Data'}
             </button>
             {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
           </form>
@@ -73,10 +149,33 @@ const ReceiptsPage = () => {
           <h2 className="text-xl font-bold text-gray-800 dark:text-gray-200 mb-4">Last Upload Result</h2>
           {receiptResult ? (
             <div>
-              <p className="text-gray-700 dark:text-gray-300"><strong>Merchant:</strong> {receiptResult.extractedData.merchant}</p>
-              <p className="text-gray-700 dark:text-gray-300"><strong>Amount:</strong> {receiptResult.extractedData.amount.toFixed(2)}</p>
-              <p className="text-gray-700 dark:text-gray-300"><strong>Category:</strong> {receiptResult.extractedData.category}</p>
-              <p className="text-gray-700 dark:text-gray-300"><strong>Date:</strong> {new Date(receiptResult.extractedData.date).toLocaleDateString()}</p>
+              <div className="mb-4">
+                <p className="text-gray-700 dark:text-gray-300"><strong>Merchant:</strong> {receiptResult.extractedData.merchant}</p>
+                <p className="text-gray-700 dark:text-gray-300"><strong>Amount:</strong> {(parseFloat(receiptResult.extractedData.amount) || 0).toFixed(2)}</p>
+                <p className="text-gray-700 dark:text-gray-300"><strong>Category:</strong> {receiptResult.extractedData.category}</p>
+                <p className="text-gray-700 dark:text-gray-300"><strong>Date:</strong> {new Date(receiptResult.extractedData.date).toLocaleDateString()}</p>
+                {receiptResult.extractedData.isIncome && (
+                  <p className="text-gray-700 dark:text-gray-300"><strong>Income:</strong> Yes</p>
+                )}
+              </div>
+
+              <div className="flex gap-3 mb-4">
+                <button 
+                  onClick={handleEditResult}
+                  disabled={isSaving}
+                  className="px-4 py-2 bg-yellow-500 hover:bg-yellow-600 disabled:bg-yellow-300 text-white rounded-lg font-medium"
+                >
+                  Edit
+                </button>
+                <button 
+                  onClick={handleFinalSave}
+                  disabled={isSaving}
+                  className="px-4 py-2 bg-green-600 hover:bg-green-700 disabled:bg-green-300 text-white rounded-lg font-medium"
+                >
+                  {isSaving ? 'Saving...' : 'Save Transaction'}
+                </button>
+              </div>
+
               <img src={`http://localhost:5001${receiptResult.fileUrl}`} alt="Uploaded Receipt" className="mt-4 rounded-lg max-w-full h-auto" />
             </div>
           ) : (
@@ -85,6 +184,27 @@ const ReceiptsPage = () => {
         </div>
 
       </div>
+
+      {/* Transaction Modal for editing receipt data */}
+      {openEditReceiptResult && receiptResult && (
+        <TransactionModal 
+          isOpen={openEditReceiptResult} 
+          onClose={() => {
+            setOpenEditReceiptResult(false);
+            setIsEditingResult(false);
+          }} 
+          onSubmit={handleEditReceiptSubmit} 
+          transaction={{
+            name: receiptResult.extractedData.merchant || '',
+            category: receiptResult.extractedData.category || '',
+            cost: receiptResult.extractedData.amount || 0,
+            addedOn: receiptResult.extractedData.date || new Date().toISOString().split('T')[0],
+            isIncome: receiptResult.extractedData.isIncome || false
+          }}
+          categories={categories}
+          onNewCategory={handleNewCategory}
+        />
+      )}
     </>
   );
 };

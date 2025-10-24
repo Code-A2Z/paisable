@@ -75,19 +75,6 @@ const uploadReceipt = async (req, res) => {
 
     const savedReceipt = await newReceipt.save();
 
-    // Automatically create a corresponding expense transaction
-    if (savedReceipt) {
-      const newTransaction = new IncomeExpense({
-        user: req.user.id,
-        name: savedReceipt.extractedData.merchant,
-        category: savedReceipt.extractedData.category,
-        cost: savedReceipt.extractedData.amount,
-        addedOn: savedReceipt.extractedData.date,
-        isIncome: false,
-      });
-      await newTransaction.save();
-    }
-
     res.status(201).json(savedReceipt);
   } catch (error) {
     console.error("Error with Gemini API:", error);
@@ -103,6 +90,65 @@ const uploadReceipt = async (req, res) => {
   }
 };
 
+// @desc    Save transaction after user confirmation and edits
+// @route   POST /api/receipts/save-transaction
+// @access  Private
+const saveTransactionFromReceipt = async (req, res) => {
+  try {
+    const { receiptId, transactionData } = req.body;
+
+    // Validate required fields
+    if (!receiptId || !transactionData) {
+      return res.status(400).json({ message: 'Receipt ID and transaction data are required' });
+    }
+
+    // Verify the receipt belongs to the user
+    const receipt = await Receipt.findOne({ _id: receiptId, user: req.user.id });
+    if (!receipt) {
+      return res.status(404).json({ message: 'Receipt not found' });
+    }
+
+    // Validate and parse the date
+    const transactionDate = new Date(transactionData.addedOn);
+    if (isNaN(transactionDate.getTime())) {
+      return res.status(400).json({ message: 'Invalid date format provided' });
+    }
+
+    // Create the transaction with user-confirmed data
+    const newTransaction = new IncomeExpense({
+      user: req.user.id,
+      name: transactionData.name,
+      category: transactionData.category,
+      cost: transactionData.cost,
+      addedOn: transactionDate,
+      isIncome: transactionData.isIncome || false,
+    });
+
+    const savedTransaction = await newTransaction.save();
+
+    // Update the receipt with the final confirmed data
+    receipt.extractedData = {
+      merchant: transactionData.name,
+      amount: transactionData.cost,
+      category: transactionData.category,
+      date: transactionDate,
+      isIncome: transactionData.isIncome || false,
+    };
+    await receipt.save();
+
+    res.status(201).json({
+      message: 'Transaction saved successfully',
+      transaction: savedTransaction,
+      receipt: receipt
+    });
+
+  } catch (error) {
+    console.error('Error saving transaction:', error);
+    res.status(500).json({ message: 'Failed to save transaction', error: error.message });
+  }
+};
+
 module.exports = {
   uploadReceipt,
+  saveTransactionFromReceipt,
 };
