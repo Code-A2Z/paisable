@@ -7,7 +7,8 @@ const { validateRegistration } = require('../middleware/validationMiddleware');
 router.post('/signup', validateRegistration, signup);
 router.post('/login', login);
 router.post('/forgot-password',forgotPassword);
-router.post('/reset-password/:token',resetPassword)
+// frontend posts the token in the request body, not the url — keep the route as POST /reset-password
+router.post('/reset-password',resetPassword);
 router.get('/me', protect, getMe);
 router.put('/setup', protect, completeSetup);
 

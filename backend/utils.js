@@ -39,11 +39,17 @@ const calculateNextDueDate = (startDate, frequency) => {
 };
 
 const sendEmail= async(options)=>{
+    // Accept both styles for compatibility:
+    // controller may call with { to, subject, text }
+    // older code may call with { email, subject, message }
+    const to = options.to || options.email;
+    const text = options.text || options.message;
+
     const mailOptions={
         from:`Paisable <${process.env.EMAIL_FROM}>`,
-        to:options.email,
+        to,
         subject:options.subject,
-        text:options.message
+        text
     }
     await transporter.sendMail(mailOptions);
 }
