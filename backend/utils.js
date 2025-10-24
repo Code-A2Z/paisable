@@ -1,3 +1,14 @@
+const nodemailer=require('nodemailer');
+
+const transporter=nodemailer.createTransport({
+    host:process.env.EMAIL_HOST,
+    port:process.env.EMAIL_PORT,
+    auth:{
+        user:process.env.EMAIL_USER,
+        pass:process.env.EMAIL_PASS
+    }
+})
+
 const calculateNextDueDate = (startDate, frequency) => {
     const start = new Date(startDate);
     if (isNaN(start.getTime())) {
@@ -27,4 +38,22 @@ const calculateNextDueDate = (startDate, frequency) => {
     return nextDueDate;
 };
 
-module.exports = { calculateNextDueDate };
+const sendEmail= async(options)=>{
+    // Accept both styles for compatibility:
+    // controller may call with { to, subject, text }
+    // older code may call with { email, subject, message }
+    const to = options.to || options.email;
+    const text = options.text || options.message;
+
+    const mailOptions={
+        from:`Paisable <${process.env.EMAIL_FROM}>`,
+        to,
+        subject:options.subject,
+        text
+    }
+    await transporter.sendMail(mailOptions);
+}
+
+
+
+module.exports = { calculateNextDueDate,sendEmail };
