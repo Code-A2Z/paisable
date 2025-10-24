@@ -132,7 +132,10 @@ const DashboardPage = () => {
           {loading ? <Spinner /> : chartData?.expensesByCategory.length > 0 ? (
             <CategoryPieChart data={chartData.expensesByCategory} theme={theme} />
           ) : (
-            <EmptyState message="No expense data to display." icon={<IoWarning className="w-6 h-6 text-yellow-500" />} />
+            <EmptyState message="No expense data to display." icon={<IoWarning 
+                className="w-6 h-6 text-yellow-300 dark:text-yellow-400" 
+                style={{ stroke: 'black', strokeWidth: 15 }} 
+              />} />
           )}
         </div>
         <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
@@ -173,7 +176,10 @@ const DashboardPage = () => {
           {loading ? <Spinner /> : chartData?.incomeOverTime.length > 0 ? (
             <LineChart label={"Income"} data={chartData.incomeOverTime} theme={theme} />
           ) : (
-            <EmptyState message="No income data to display." icon={<IoWarning className="w-6 h-6 text-yellow-500" />} />
+            <EmptyState message="No expense data to display." icon={<IoWarning 
+                className="w-6 h-6 text-yellow-300 dark:text-yellow-400" 
+                style={{ stroke: 'black', strokeWidth: 15 }} 
+              />} />
           )}
         </div>
         <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md h-[500px]">
@@ -181,7 +187,10 @@ const DashboardPage = () => {
           {loading ? <Spinner /> : chartData?.expensesOverTime.length > 0 ? (
             <LineChart label={"Expenses"} data={chartData.expensesOverTime} theme={theme} />
           ) : (
-            <EmptyState message="No income data to display." icon={<IoWarning className="w-6 h-6 text-yellow-500" />} />
+            <EmptyState message="No expense data to display." icon={<IoWarning 
+                className="w-6 h-6 text-yellow-300 dark:text-yellow-400" 
+                style={{ stroke: 'black', strokeWidth: 15 }} 
+              />} />
           )}
         </div>
       </div>
