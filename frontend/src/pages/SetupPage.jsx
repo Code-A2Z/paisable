@@ -94,7 +94,7 @@ const SetupPage = () => {
           >
             {loading ? (
               <>
-                <Spinner />
+                <Spinner inline />
                 <span className="ml-2">Setting up...</span>
               </>
             ) : (
