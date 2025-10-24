@@ -37,7 +37,7 @@ const Layout = () => {
       Paisable
     </span>
 
-              <div className="hidden md:block">
+              <div className="hidden lg:block">
                 <div className="ml-10 flex items-baseline space-x-4">
                   <NavLink to="/dashboard" className={getNavLinkClass}>
                     Dashboard
