@@ -42,7 +42,7 @@ const TransactionsPage = () => {
   const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
   const { currency } = useCurrency();
   const isInitialMount = useRef(true);
-  const allCategories = [...new Set([...expenseCategories, ...incomeCategories])]; 
+  const allCategories = [...new Set([...expenseCategories, ...incomeCategories])];
 
   const fetchData = useCallback(async (currentSearchTerm = searchTerm) => {
     if (isInitialMount.current) {
@@ -101,7 +101,7 @@ const TransactionsPage = () => {
     if (isInitialMount.current) {
       fetchData(); // Fetch on initial mount
     } else {
-       // Debounced search is handled separately in handleSearchChange
+      // Debounced search is handled separately in handleSearchChange
       if (!debounceTimer.current) {
         fetchData();
       }
@@ -138,7 +138,7 @@ const TransactionsPage = () => {
     setDateTo('');
     setPage(1);
   };
-  
+
   const hasActiveFilters = searchTerm || typeFilter !== 'all' || categoryFilter !== 'all' || dateFrom || dateTo;
 
   const handleOpenTransactionModal = (transaction = null) => {
@@ -193,19 +193,19 @@ const TransactionsPage = () => {
   };
 
   const toggleSelect = (id) => {
-    setSelectedTransactionIds(prev => 
+    setSelectedTransactionIds(prev =>
       prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]
     );
   };
-  
+
   const handleBulkDelete = async () => {
     if (!selectedTransactionIds.length) return;
-    
+
     const confirmMessage = `Are you sure you want to permanently delete these ${selectedTransactionIds.length} transactions? This action cannot be undone.`;
     if (window.confirm(confirmMessage)) {
       try {
-        await api.delete('/transactions/bulk', { 
-          data: { transactionIds: selectedTransactionIds } 
+        await api.delete('/transactions/bulk', {
+          data: { transactionIds: selectedTransactionIds }
         });
         setSelectedTransactionIds([]);
         fetchData(); // Refetch data
@@ -240,7 +240,7 @@ const TransactionsPage = () => {
       <div className="flex flex-wrap gap-4 justify-between items-center mb-6">
         <h1 className="text-3xl font-bold text-gray-900">Transactions</h1>
         <div className="flex flex-wrap gap-4">
-          {selectedTransactionIds.length > 0 && 
+          {selectedTransactionIds.length > 0 &&
             <button onClick={handleBulkDelete} className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700">
               Delete ({selectedTransactionIds.length})
             </button>
@@ -252,9 +252,14 @@ const TransactionsPage = () => {
             <span className='text-2xl'>+</span> Add Transaction
           </button>
           <button
-            onClick={handleExportCSV}
-            className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
-            title="Export all transactions to CSV"
+            onClick={() => { if (transactions.length === 0) return; handleExportCSV(); }}
+            disabled={transactions.length === 0}
+            aria-disabled={transactions.length === 0}
+            className={`px-4 py-2 rounded-lg text-white transition-colors duration-150 ${transactions.length === 0
+              ? 'bg-gray-300 cursor-not-allowed'
+              : 'bg-green-600 hover:bg-green-700'
+              }`}
+            title={transactions.length === 0 ? 'No transactions to export' : 'Export all transactions to CSV'}
           >
             Export to CSV
           </button>
@@ -336,11 +341,11 @@ const TransactionsPage = () => {
         <Spinner />
       ) : (
         <div className={`bg-white shadow rounded-lg overflow-x-auto hover:shadow-lg transition-all duration-300 ${isFiltering ? 'opacity-50 pointer-events-none' : 'opacity-100'}`}>
-        {transactions.length > 0 ? (
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                 <th className="px-2 py-3">
+          {transactions.length > 0 ? (
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="px-2 py-3">
                     <input
                       type="checkbox"
                       className="w-4 h-4 rounded focus:ring-2 focus:ring-blue-600 hover:ring-4 hover:ring-blue-200 transition-all duration-200 cursor-pointer"
@@ -349,18 +354,18 @@ const TransactionsPage = () => {
                       onChange={() => setSelectedTransactionIds(selectedTransactionIds.length ? [] : transactions.map(t => t._id))}
                     />
                   </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Note</th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {transactions.map((tx) => (
-                <tr key={tx._id} className="hover:shadow-[0_2px_4px_rgba(0,0,0,0.1)] transition-shadow duration-200">
-                  <td className="px-2 py-6 text-center">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Note</th>
+                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {transactions.map((tx) => (
+                  <tr key={tx._id} className="hover:shadow-[0_2px_4px_rgba(0,0,0,0.1)] transition-shadow duration-200">
+                    <td className="px-2 py-6 text-center">
                       <input
                         type="checkbox"
                         className="w-4 h-4 rounded focus:ring-2 focus:ring-blue-600 hover:ring-4 hover:ring-blue-200 transition-all duration-200 cursor-pointer"
@@ -368,24 +373,24 @@ const TransactionsPage = () => {
                         onChange={() => toggleSelect(tx._id)}
                       />
                     </td>
-                  <td className="px-6 py-4 whitespace-nowrap">{tx.name}</td>
-                  <td className="px-6 py-4 whitespace-nowrap">{tx.category}</td>
-                  <td className={`px-6 py-4 whitespace-nowrap font-semibold ${tx.isIncome ? 'text-green-600' : 'text-red-600'}`}>
-                    {tx.isIncome ? '+' : '-'}{new Intl.NumberFormat('en-US', {
-                      style: 'currency',
-                      currency: currency.code,
-                    }).format(tx.cost)}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">{new Date(tx.addedOn).toLocaleDateString()}</td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <button
-                      onClick={() => handleOpenDetailsModal(tx)}
-                      className="text-blue-600 hover:text-blue-800 underline font-medium"
-                    >
-                      Details
-                    </button>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                    <td className="px-6 py-4 whitespace-nowrap">{tx.name}</td>
+                    <td className="px-6 py-4 whitespace-nowrap">{tx.category}</td>
+                    <td className={`px-6 py-4 whitespace-nowrap font-semibold ${tx.isIncome ? 'text-green-600' : 'text-red-600'}`}>
+                      {tx.isIncome ? '+' : '-'}{new Intl.NumberFormat('en-US', {
+                        style: 'currency',
+                        currency: currency.code,
+                      }).format(tx.cost)}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">{new Date(tx.addedOn).toLocaleDateString()}</td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <button
+                        onClick={() => handleOpenDetailsModal(tx)}
+                        className="text-blue-600 hover:text-blue-800 underline font-medium"
+                      >
+                        Details
+                      </button>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                       <div className="flex items-center justify-end gap-2">
                         <button
                           onClick={() => handleOpenTransactionModal(tx)}
@@ -403,38 +408,38 @@ const TransactionsPage = () => {
                         </button>
                       </div>
                     </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           ) : (
-          <div className="p-6">
-            <EmptyState message="No Transaction done" />
-          </div>
-                )}
+            <div className="p-6">
+              <EmptyState message="No Transaction done" />
+            </div>
+          )}
         </div>
       )}
 
       {!loading && totalPages > 1 && (
         <div className="flex justify-between items-center mt-6">
-          <button 
-            onClick={() => setPage(p => Math.max(p - 1, 1))} 
-            disabled={page === 1} 
+          <button
+            onClick={() => setPage(p => Math.max(p - 1, 1))}
+            disabled={page === 1}
             className="flex items-center justify-center w-10 h-10 bg-white border border-gray-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
             title="Previous page"
           >
             <ChevronLeft size={20} />
           </button>
-          
+
           <div className="flex items-center gap-2">
             <span className="text-sm text-gray-600">Page</span>
             <span className="px-3 py-1 bg-blue-600 text-white rounded-lg font-medium">{page}</span>
             <span className="text-sm text-gray-600">of {totalPages}</span>
           </div>
-          
-          <button 
-            onClick={() => setPage(p => Math.min(p + 1, totalPages))} 
-            disabled={page === totalPages} 
+
+          <button
+            onClick={() => setPage(p => Math.min(p + 1, totalPages))}
+            disabled={page === totalPages}
             className="flex items-center justify-center w-10 h-10 bg-white border border-gray-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
             title="Next page"
           >
