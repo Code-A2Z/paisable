@@ -15,6 +15,7 @@ import Layout from './components/Layout';
 import ProtectedRoute from './components/ProtectedRoute';
 import SetupProtectedRoute from './components/SetupProtectedRoute';
 import RecurringTransactions from './pages/RecurringTransactions';
+import { PublicRoute } from './components/PublicRoute';
 
 function App() {
   return (
@@ -22,8 +23,8 @@ function App() {
       <Routes>
         {/* Public Routes */}
         <Route path="/" element={<WelcomePage />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/register" element={<RegisterPage />} />
+        <Route path="/login" element={<PublicRoute><LoginPage /></PublicRoute>} />
+        <Route path="/register" element={<PublicRoute><RegisterPage /></PublicRoute>} />
         <Route path="/contact" element={<ContactUs />} />
         {/* Protected Routes */}
         <Route
@@ -42,7 +43,7 @@ function App() {
             </SetupProtectedRoute>
           }
         >
-          <Route path="/dashboard" element={<DashboardPage />} />
+          <Route path="/dashboard" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
           <Route path="/transactions" element={<TransactionsPage />} />
           <Route path="/receipts" element={<ReceiptsPage />} />
           <Route path="/settings" element={<SettingsPage />} />
