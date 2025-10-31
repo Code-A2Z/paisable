@@ -7,7 +7,9 @@ const axios = require('axios');
 const cron = require('node-cron');
 require('./cron');
 
-// import the sanitizeMiddleware
+// securityMiddleware
+const { securityMiddleware } = require('./middleware/security');
+// sanitizeMiddleware
 const { sanitizeMiddleware } = require("./middleware/sanitizeMiddleware")
 
 // Load environment variables
@@ -18,6 +20,10 @@ connectDB();
 
 const app = express();
 
+// Apply security middleware
+securityMiddleware(app);
+
+// CORS setup
 const allowedOrigins = [
   "http://localhost:5173",
   "https://paisable.netlify.app",
@@ -33,9 +39,10 @@ app.use(cors({
   },
   credentials: true
 }));
+
 app.use(express.json());
 
-// sanitizeMiddleware
+// Apply sanitize middleware
 app.use(sanitizeMiddleware());
 
 // Routes
@@ -46,7 +53,7 @@ app.use('/api/users', require('./routes/userRoutes'));
 app.use('/api/budgets', require('./routes/budgetRoutes'));
 app.use('/api/recurring', require('./routes/recurringTransactionRoutes'));
 
-// Serve static files from the uploads directory
+// Serve static files from uploads
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 app.get('/', (req, res) => {
@@ -57,7 +64,8 @@ const PORT = process.env.PORT || 5000;
 
 const server = app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
 
-cron.schedule("*/10 * * * *", async() => {
+// Keep-alive ping to prevent cold starts
+cron.schedule("*/10 * * * *", async () => {
   const keepAliveUrl = process.env.KEEP_ALIVE_URL;
   if (!keepAliveUrl) {
     console.error(
