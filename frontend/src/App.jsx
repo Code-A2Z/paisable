@@ -15,6 +15,8 @@ import Layout from './components/Layout';
 import ProtectedRoute from './components/ProtectedRoute';
 import SetupProtectedRoute from './components/SetupProtectedRoute';
 import RecurringTransactions from './pages/RecurringTransactions';
+import ForgotPasswordPage from './pages/ForgotPasswordPage';
+import ResetPasswordPage from './pages/ResetPasswordPage';
 
 function App() {
   return (
@@ -25,6 +27,8 @@ function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/contact" element={<ContactUs />} />
+        <Route path='/forgot-password' element={<ForgotPasswordPage />}></Route>
+        <Route path='/reset-password' element={<ResetPasswordPage />}></Route>
         {/* Protected Routes */}
         <Route
           path="/setup"

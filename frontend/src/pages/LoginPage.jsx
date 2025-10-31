@@ -38,9 +38,9 @@ export default function LoginPage() {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 px-4 py-8">
       {/* Logo/Brand */}
-      <Link 
-        to="/" 
-        className="text-5xl font-bold bg-gradient-to-r from-blue-600 to-blue-500 dark:from-blue-400 dark:to-blue-300 bg-clip-text text-transparent mb-12 transition-all duration-500 hover:scale-105 hover:drop-shadow-2xl cursor-pointer animate-fade-in" 
+      <Link
+        to="/"
+        className="text-5xl font-bold bg-gradient-to-r from-blue-600 to-blue-500 dark:from-blue-400 dark:to-blue-300 bg-clip-text text-transparent mb-12 transition-all duration-500 hover:scale-105 hover:drop-shadow-2xl cursor-pointer animate-fade-in"
         title="Go to home"
       >
         Paisable
@@ -72,14 +72,14 @@ export default function LoginPage() {
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                 <HiMail aria-hidden="true" className="h-5 w-5 text-gray-400 dark:text-gray-500" />
               </div>
-              <input 
-                type="email" 
-                placeholder="you@example.com" 
-                className="w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700/50 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200" 
-                id="email" 
-                value={email} 
-                onChange={(e) => setEmail(e.target.value)} 
-                required 
+              <input
+                type="email"
+                placeholder="you@example.com"
+                className="w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700/50 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                id="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
               />
             </div>
           </div>
@@ -89,16 +89,23 @@ export default function LoginPage() {
             <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2" htmlFor="password">
               Password
             </label>
-            <PasswordInput 
-              value={password} 
+            <PasswordInput
+              value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700/50 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
             />
           </div>
 
+          {/* Forgot Password Link */}
+          <div className="flex justify-end">
+            <Link to='/forgot-password' className='text-blue-600 dark:text-blue-400 hover:underline text-sm'>
+              Forgot Password?
+            </Link>
+          </div>
+
           {/* Submit Button */}
-          <button 
-            type="submit" 
+          <button
+            type="submit"
             disabled={isLoading}
             className="w-full px-6 py-3 text-white font-semibold bg-gradient-to-r from-blue-600 to-blue-500 rounded-lg hover:from-blue-700 hover:to-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transform transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-2"
           >
@@ -132,8 +139,8 @@ export default function LoginPage() {
 
           {/* Register Link */}
           <div className="text-center">
-            <Link 
-              to="/register" 
+            <Link
+              to="/register"
               className="inline-flex items-center gap-1 text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-semibold transition-colors duration-200"
             >
               Create an account
