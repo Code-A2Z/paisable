@@ -11,9 +11,11 @@ const CategoryIcon = () => <svg className="h-12 w-12 text-purple-500" fill="none
 
 const FeatureCard = ({ icon, title, children }) => {
   return (
-    <div className="relative group cursor-pointer">
+    <Link  to="/login">
+    
+    <div className="relative group cursor-pointer ">
       {/* Glow effect on hover */}
-      <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 blur-xl bg-gradient-to-r from-sky-400/40 via-purple-400/40 to-pink-400/40 transition-opacity duration-500" />
+      <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 blur-l bg-gradient-to-r from-sky-400/40 via-purple-400/40 to-pink-400/40 transition-opacity duration-500" />
 
       {/* Actual Card */}
       <div className="relative p-8 bg-white dark:bg-gray-900 rounded-2xl shadow-md hover:shadow-2xl transition-all duration-300 transform group-hover:-translate-y-2 border border-gray-200 dark:border-gray-700">
@@ -35,6 +37,7 @@ const FeatureCard = ({ icon, title, children }) => {
         </p>
       </div>
     </div>
+    </Link>
   );
 };
 
@@ -43,38 +46,76 @@ export default function WelcomePage() {
   const { logout } = useAuth();
 
   return (
-    <div className="bg-gray-50 dark:bg-gray-900 min-h-screen font-montserrat text-gray-800 dark:text-gray-200">
-      {/* Header */}
-      <header className="py-4 px-8 flex justify-between items-center bg-white dark:bg-gray-800 shadow-md">
-        <Link to="/" className="text-2xl font-bold text-blue-600 dark:text-blue-400">
-          Paisable
-        </Link>
-        <div className="flex items-center gap-4">
-          <ThemeToggle />
-          {user ? (
+    <div className="bg-background">
+     
+      <nav className="border-b border-border ">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
+          <div className="text-2xl font-bold text-primary">Paisable</div>
+          <div className="flex items-center gap-4">
+            <ThemeToggle />
+             {user ? (
             <>
-              <Link to="/dashboard" className="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 font-semibold">Dashboard</Link>
-              <button onClick={logout} className="bg-red-500 text-white px-4 py-2 rounded-md font-semibold hover:bg-red-600">Logout</button>
+              <Link to="/dashboard" className="text-gray-600 dark:text-gray-300 hover:bg-background/80 transition font-semibold">Dashboard</Link>
+              <button onClick={logout} className="bg-secondary text-white px-4 py-2 rounded-md font-semibold hover:bg-red-600">Logout</button>
             </>
           ) : (
             <>
-              <Link to="/login" className="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 font-semibold">Login</Link>
-              <Link to="/register" className="bg-blue-600 text-white px-4 py-2 rounded-md font-semibold hover:bg-blue-700">Sign Up</Link>
+              <Link to="/login" className="text-gray-600 dark:text-gray-300 hover:text-[#155e75] dark:hover:text-gray-700 font-semibold">Login</Link>
+              <Link to="/register" className="bg-secondary text-white px-4 py-2 rounded-md font-semibold hover:bg-[#155e75] dark:hover:bg-gray-700">Sign Up</Link>
             </>
           )}
+            
+          </div>
         </div>
-      </header>
+      </nav>
+      <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          {/* Left Content */}
+          <div className="space-y-8">
+            <div className="space-y-4">
+              <div className="inline-block px-4 py-2 bg-secondary rounded-full">
+              </div>
+              <h1 className="text-5xl sm:text-6xl font-bold text-primary text-balance leading-tight">
+                Take Control of Your Finances
+              </h1>
+              <p className="text-lg text-foreground leading-relaxed max-w-lg">
+                The simple, smart, and secure way to manage your income and expenses, visualize your spending, and achieve your financial goals.
+              </p>
+            </div>
+            
+           
 
-      {/* Hero Section */}
-      <main className="text-center py-20 px-4">
-        <h2 className="text-5xl font-bold text-gray-900 dark:text-white">Take Control of Your Finances</h2>
-        <p className="mt-4 text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">The simple, smart, and secure way to manage your income and expenses, visualize your spending, and achieve your financial goals.</p>
-        {user ? (
-          <Link to="/dashboard" className="mt-8 inline-block bg-blue-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-blue-700">Go to Dashboard</Link>
-        ) : (
-          <Link to="/register" className="mt-8 inline-block bg-blue-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-blue-700">Get Started for Free</Link>
-        )}
-      </main>
+            
+          </div>
+
+          {/* Right Visual */}
+          <div className="relative h-96 sm:h-full min-h-96 bg-gradient-to-br from-secondary to-slate-100 rounded-3xl overflow-hidden shadow-2xl">
+            <div className="absolute inset-0 opacity-10 bg-" />
+            <div className="absolute top-8 left-8 right-8 space-y-4">
+              <div className="bg-secondary rounded-xl p-6 shadow-lg space-y-3">
+                <p className="text-sm text-foreground">Total Balance</p>
+                <p className="text-3xl font-bold text-primary">$24,582.50</p>
+                <div className="flex gap-2 pt-2">
+                  <div className="h-1 flex-1 bg-accent rounded-full" />
+                  <div className="h-1 flex-1 bg-secondary rounded-full" />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="bg-secondary rounded-lg p-4 shadow-lg">
+                  <p className="text-xs text-foreground mb-1">Income</p>
+                  <p className="text-xl font-bold text-primary">+$5,200</p>
+                </div>
+                <div className="bg-secondary rounded-lg p-4 shadow-lg">
+                  <p className="text-xs text-muted-foreground mb-1">Expenses</p>
+                  <p className="text-xl font-bold text-primary">-$1,840</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      
 
       {/* Features Section */}
       <section className="py-20 bg-gray-100 dark:bg-gray-800/50">
@@ -105,7 +146,7 @@ export default function WelcomePage() {
       </section>
 
       {/* Footer */}
-      <footer className="py-8 text-center text-gray-500 dark:text-gray-400">
+      <footer className="py-8 text-center text-gray-500 dark:text-gray-400 bg-secondary">
         <p>&copy; {new Date().getFullYear()} Paisable. All Rights Reserved.</p>
       </footer>
     </div>

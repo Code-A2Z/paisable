@@ -84,7 +84,7 @@ const Budgets = () => {
   return (
     <>
       <div className="flex flex-wrap gap-4 justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold text-gray-900">Budgets</h1>
+        <h1 className="text-3xl font-bold text-foreground">Budgets</h1>
         <div className="flex gap-4">
           <button
             onClick={() => handleOpenBudgetModal()}

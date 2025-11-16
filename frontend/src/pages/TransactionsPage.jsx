@@ -238,7 +238,7 @@ const TransactionsPage = () => {
   return (
     <>
       <div className="flex flex-wrap gap-4 justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold text-gray-900">Transactions</h1>
+        <h1 className="text-3xl font-bold text-foreground">Transactions</h1>
         <div className="flex flex-wrap gap-4">
           {selectedTransactionIds.length > 0 && 
             <button onClick={handleBulkDelete} className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700">

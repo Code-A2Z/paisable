@@ -76,7 +76,7 @@ const RecurringTransactions = () => {
   return (
     <>
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold text-gray-900">
+        <h1 className="text-3xl font-bold text-foreground">
           Recurring Transactions
         </h1>
         <button
