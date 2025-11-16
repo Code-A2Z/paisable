@@ -3,3 +3,20 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+:root {
+  --background: #ffffff;
+  --foreground: #111111;
+  --border: #e5e7eb;
+  --primary: #0f172a;
+  --secondary: oklch(39.8% 0.07 227.392);
+  --accent: oklch(82.8% 0.189 84.429);
+}
+
+.dark {
+  --background: #0b0f19;
+  --foreground: #ffffff;
+  --border: #1e293b;
+  --primary: #ffffff;
+  --secondary: #1e293b;
+  --accent: #38bdf8;
+}

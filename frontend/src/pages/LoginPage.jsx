@@ -36,7 +36,7 @@ export default function LoginPage() {
   }; */
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 px-4 py-8">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-background px-4 py-8">
       {/* Logo/Brand */}
       <Link 
         to="/" 
