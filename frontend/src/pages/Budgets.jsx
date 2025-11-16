@@ -13,9 +13,12 @@ const Budgets = () => {
   const { currency } = useCurrency();
   const [isBudgetModalOpen, setIsBudgetModalOpen] = useState(false);
   const [editingBudget, setEditingBudget] = useState(null);
+  const [error, setError] = useState('');
+  const [budgetAlerts, setBudgetAlerts] = useState([]);
 
   const fetchData = useCallback(async () => {
     setLoading(true);
+    setError('');
     try {
       const [budgetsRes, categoriesRes, transactionsRes] = await Promise.all([
         api.get('/budgets'),
@@ -27,6 +30,7 @@ const Budgets = () => {
       setTransactions(transactionsRes.data.transactions || []);
     } catch (error) {
       console.error('Failed to fetch budgets or transactions', error);
+      setError('Failed to load budgets. Please check your connection.');
     } finally {
       setLoading(false);
     }
@@ -35,6 +39,29 @@ const Budgets = () => {
   useEffect(() => {
     fetchData();
   }, [fetchData]);
+
+  // Budget alerts - auto calculates
+  useEffect(() => {
+    const alerts = budgets.map(budget => {
+      const spent = calculateSpent(budget);
+      const percent = (spent / budget.amount) * 100;
+      if (percent > 100) {
+        return {
+          message: `🚨 OVER BUDGET: ${budget.category} exceeded by ${(percent-100).toFixed(1)}%`,
+          type: 'error'
+        };
+      }
+      if (percent > 80) {
+        return {
+          message: `⚠️ WARNING: ${budget.category} at ${percent.toFixed(1)}% of budget`,
+          type: 'warning'
+        };
+      }
+      return null;
+    }).filter(alert => alert);
+    
+    setBudgetAlerts(alerts);
+  }, [budgets, transactions]);
 
   const handleOpenBudgetModal = (budget = null) => {
     setEditingBudget(budget);
@@ -48,22 +75,26 @@ const Budgets = () => {
 
   const handleFormSubmit = async (formData, id) => {
     try {
+      setError('');
       if (id) await api.put(`/budgets/${id}`, formData);
       else await api.post('/budgets', formData);
       fetchData();
       handleCloseBudgetModal();
     } catch (error) {
       console.error('Failed to save budget', error);
+      setError('Failed to save budget. Please try again.');
     }
   };
 
   const handleDeleteBudget = async (id) => {
     if (window.confirm('Are you sure you want to delete this budget?')) {
       try {
+        setError('');
         await api.delete(`/budgets/${id}`);
         fetchData();
       } catch (error) {
         console.error('Failed to delete budget', error);
+        setError('Failed to delete budget. Please try again.');
       }
     }
   };
@@ -94,6 +125,34 @@ const Budgets = () => {
           </button>
         </div>
       </div>
+
+      {/* Error Display */}
+      {error && (
+        <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg">
+          <div className="flex items-center">
+            <svg className="w-5 h-5 text-red-400 mr-2" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+            </svg>
+            <p className="text-red-800">{error}</p>
+          </div>
+        </div>
+      )}
+
+      {/* Budget Alerts */}
+      {budgetAlerts.map((alert, index) => (
+        <div 
+          key={index} 
+          className={`mb-3 p-3 rounded-lg border ${
+            alert.type === 'error' 
+              ? 'bg-red-50 border-red-200 text-red-800' 
+              : 'bg-yellow-50 border-yellow-200 text-yellow-800'
+          }`}
+        >
+          <div className="flex items-center">
+            <span className="font-semibold">{alert.message}</span>
+          </div>
+        </div>
+      ))}
 
       {loading ? (
         <Spinner />
@@ -129,9 +188,7 @@ const Budgets = () => {
               {budgets.map((b) => {
                 const spent = calculateSpent(b);
                 const remaining = b.amount - spent;
-                const percent = Math.min((spent / b.amount) * 100, 100).toFixed(
-                  1
-                );
+                const percent = Math.min((spent / b.amount) * 100, 100).toFixed(1);
 
                 return (
                   <tr key={b._id}>
@@ -177,6 +234,12 @@ const Budgets = () => {
                       <span className="text-xs text-gray-500">{percent}%</span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                      <button
+                        onClick={() => handleOpenBudgetModal(b)}
+                        className="text-indigo-600 hover:text-indigo-900 mr-4"
+                      >
+                        Edit
+                      </button>
                       <button
                         onClick={() => handleDeleteBudget(b._id)}
                         className="text-red-600 hover:text-red-900"

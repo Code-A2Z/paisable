@@ -52,6 +52,19 @@ const ReceiptsPage = () => {
 			return;
 		}
 
+		// Validate file type
+		const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'application/pdf'];
+		if (!validTypes.includes(file.type)) {
+			setError("Please upload JPG, PNG, or PDF files only.");
+			return;
+		}
+
+		// Validate file size (5MB max)
+		if (file.size > 5 * 1024 * 1024) {
+			setError("File size must be less than 5MB.");
+			return;
+		}
+
 		const formData = new FormData();
 		formData.append("receipt", file);
 
@@ -68,7 +81,13 @@ const ReceiptsPage = () => {
 			// Open the modal to allow user to edit the extracted data
 			setOpenEditReceiptResult(true);
 		} catch (err) {
-			setError("Upload failed. Please try again.");
+			if (err.response?.status === 413) {
+				setError("File too large. Please upload a smaller image.");
+			} else if (err.response?.status === 400) {
+				setError("Invalid file type. Please upload JPG, PNG, or PDF.");
+			} else {
+				setError("Upload failed. Please try again.");
+			}
 			console.error(err);
 		} finally {
 			setUploading(false);
@@ -158,7 +177,7 @@ const ReceiptsPage = () => {
 				<div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
 					<form onSubmit={handleSubmit}>
 						<label className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
-							Select a receipt file (JPG, PNG, PDF)
+							Select a receipt file (JPG, PNG, PDF - Max 5MB)
 						</label>
 						<input
 							type="file"
@@ -233,14 +252,13 @@ const ReceiptsPage = () => {
 								</button>
 							</div>
 
-							<img
-								src={`${import.meta.env.VITE_API_URL?.replace(
-									"/api",
-									""
-								)}${receiptResult.fileUrl}`}
-								alt="Uploaded Receipt"
-								className="mt-4 rounded-lg max-w-full h-auto"
-							/>
+							{receiptResult.fileUrl && (
+								<img
+									src={`/api${receiptResult.fileUrl}`}
+									alt="Uploaded Receipt"
+									className="mt-4 rounded-lg max-w-full h-auto max-h-64 object-contain"
+								/>
+							)}
 						</div>
 					) : (
 						<p className="text-gray-500 dark:text-gray-400">

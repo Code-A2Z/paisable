@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import ThemeToggle from "../components/ThemeToggle";
 import { useEffect } from "react";
+import { toast } from 'react-toastify';
 
 const ContactUs = () => {
   const [formData, setFormData] = useState({
@@ -14,6 +15,7 @@ const ContactUs = () => {
 
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [activeFaq, setActiveFaq] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -23,20 +25,41 @@ const ContactUs = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Form submitted:", formData);
-    setIsSubmitted(true);
-    setTimeout(() => {
-      setIsSubmitted(false);
-      setFormData({
-        name: "",
-        email: "",
-        subject: "",
-        message: "",
-        inquiryType: "general",
+    setIsSubmitting(true);
+    
+    try {
+      // Simulate API call - replace with actual endpoint
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // Log to console for now (replace with actual API call)
+      console.log("Form submitted:", formData);
+      
+      toast.success('Message sent successfully! We will reply within 24 hours.', {
+        position: "top-right",
+        autoClose: 5000,
       });
-    }, 5000);
+      
+      setIsSubmitted(true);
+      setTimeout(() => {
+        setIsSubmitted(false);
+        setFormData({
+          name: "",
+          email: "",
+          subject: "",
+          message: "",
+          inquiryType: "general",
+        });
+      }, 5000);
+    } catch (error) {
+      toast.error('Failed to send message. Please try again.', {
+        position: "top-right",
+        autoClose: 5000,
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const toggleFaq = (index) => {
@@ -173,7 +196,7 @@ const faqs = [
   {
     question: "Will there be a mobile app version?",
     answer:
-      "We’re currently developing a mobile app for both iOS and Android so you can manage your finances on the go. Stay tuned for announcements on our official site!",
+      "We're currently developing a mobile app for both iOS and Android so you can manage your finances on the go. Stay tuned for announcements on our official site!",
   },
 ];
 
@@ -504,9 +527,20 @@ const faqs = [
                   <div className="flex justify-end">
                     <button
                       type="submit"
-                      className="inline-flex justify-center py-3 px-8 border border-transparent shadow-sm text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200"
+                      disabled={isSubmitting}
+                      className="inline-flex justify-center py-3 px-8 border border-transparent shadow-sm text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      Send Message
+                      {isSubmitting ? (
+                        <>
+                          <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                          </svg>
+                          Sending...
+                        </>
+                      ) : (
+                        'Send Message'
+                      )}
                     </button>
                   </div>
                 </form>
