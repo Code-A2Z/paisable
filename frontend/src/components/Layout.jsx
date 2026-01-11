@@ -3,6 +3,7 @@ import { Outlet, NavLink, useNavigate } from 'react-router-dom'; // 1. Import Li
 import useAuth from '../hooks/useAuth';
 import CurrencySelector from './CurrencySelector';
 import ThemeToggle from './ThemeToggle';
+import BackToTop from './BackToTop';
 
 const Layout = () => {
   const { logout } = useAuth();
@@ -18,7 +19,7 @@ const Layout = () => {
   };
 
   const handleClick = (e) => {
-   navigate("/");
+    navigate("/");
   };
 
 
@@ -29,13 +30,13 @@ const Layout = () => {
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center">
               {/* 2. Wrap the span in a Link to the dashboard */}
-               <span
-      onClick={handleClick}
-      className="font-bold text-xl text-blue-600 dark:text-blue-400 cursor-pointer transition-all duration-500 hover:scale-105 hover:drop-shadow-lg hover:text-blue-500 dark:hover:text-blue-300"
-      title="Go to home"
-    >
-      Paisable
-    </span>
+              <span
+                onClick={handleClick}
+                className="font-bold text-xl text-blue-600 dark:text-blue-400 cursor-pointer transition-all duration-500 hover:scale-105 hover:drop-shadow-lg hover:text-blue-500 dark:hover:text-blue-300"
+                title="Go to home"
+              >
+                Paisable
+              </span>
 
               <div className="hidden lg:block">
                 <div className="ml-10 flex items-baseline space-x-4">
@@ -60,6 +61,9 @@ const Layout = () => {
                   >
                     Recurring Transactions
                   </NavLink>
+                  <NavLink to="/feedback" className={getNavLinkClass}>
+                    Feedback
+                  </NavLink>
                 </div>
               </div>
             </div>
@@ -82,7 +86,8 @@ const Layout = () => {
           <Outlet />
         </div>
       </main>
-    </div>
+      <BackToTop />
+    </div >
   );
 };
 
