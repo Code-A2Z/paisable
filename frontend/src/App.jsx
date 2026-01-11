@@ -16,6 +16,7 @@ import Layout from './components/Layout';
 import ProtectedRoute from './components/ProtectedRoute';
 import SetupProtectedRoute from './components/SetupProtectedRoute';
 import RecurringTransactions from './pages/RecurringTransactions';
+import FeedbackPage from './pages/FeedbackPage';
 
 function App() {
   return (
@@ -52,6 +53,7 @@ function App() {
             path="/recurring-transactions"
             element={<RecurringTransactions />}
           />
+          <Route path="/feedback" element={<FeedbackPage />} />
         </Route>
         <Route path="*" element={<NotFound />} />
       </Routes>
