@@ -17,6 +17,8 @@ if (savedTheme) {
   initialTheme = 'dark';
 }
 updateFavicon(initialTheme);
+// Ensure the dark class is applied before first paint to avoid mismatch/flash
+document.documentElement.classList.toggle('dark', initialTheme === 'dark');
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
